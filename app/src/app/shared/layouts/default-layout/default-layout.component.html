@@ -1,0 +1,40 @@
+@if(portrait | async ) {
+
+<div
+  class="w-full h-full bg-background-500 grid grid-rows-[1fr_auto] overflow-auto"
+>
+  <main
+    id="main-content"
+    cdk-scrollable
+    class="w-full h-full max-h-full overflow-auto"
+  >
+    <div class="h-full px-4 pt-5">
+      <router-outlet></router-outlet>
+    </div>
+  </main>
+
+  <nav>
+    <app-horizontal-menu></app-horizontal-menu>
+  </nav>
+</div>
+
+} @else {
+
+<div
+  class="w-full h-full max-h-full bg-background-500 grid grid-cols-[auto_1fr] overflow-auto"
+>
+  <nav>
+    <app-side-menu></app-side-menu>
+  </nav>
+
+  <main
+    id="main-content"
+    cdk-scrollable
+    class="w-full h-full max-h-full overflow-auto"
+  >
+    <div class="h-full pt-5 px-14">
+      <router-outlet></router-outlet>
+    </div>
+  </main>
+</div>
+}

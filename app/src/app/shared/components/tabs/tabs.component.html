@@ -1,0 +1,10 @@
+<div
+    class="p-[6px] bg-background-600 rounded-md flex gap-1 w-[inherit] overflow-auto scrollbar scrollbar-track-background-600 scrollbar-thumb-background-300">
+    @for(tab of tabs(); track tab.label) {
+    <div class="min-w-32 py-1 px-2 flex-grow text-center rounded-md basis-0 truncate cursor-pointer" [title]="tab.label"
+        (click)="setCurrentTab(tab)" [class.bg-background-400]="tab.value === selectedTab()"
+        [class.hover:bg-background-500]="tab.value !== selectedTab()">
+        <span class="text-xl">{{ tab.label }}</span>
+    </div>
+    }
+</div>

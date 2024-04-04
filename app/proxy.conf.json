@@ -1,0 +1,11 @@
+{
+    "/api": {
+        "target": "https://d28jtj2wwws6wz.cloudfront.net/api",
+        "secure": true,
+        "changeOrigin": true,
+        "logLevel": "debug",
+        "pathRewrite": {
+            "^/api": ""
+        }
+    }
+}

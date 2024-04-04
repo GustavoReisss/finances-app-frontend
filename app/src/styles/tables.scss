@@ -1,0 +1,29 @@
+.__table {
+    width: 100%;
+    --table-border-color: unset;
+
+    tr {
+        border-bottom: 1px solid hsl(var(--table-border-color));
+
+    }
+
+    th,
+    td {
+        padding: 0.5rem 1rem
+    }
+
+    th {
+        font-weight: 600;
+        text-align: start;
+    }
+}
+
+.table-primary {
+    @extend .__table;
+    --table-border-color: var(--primary-700);
+}
+
+.table-secondary {
+    @extend .__table;
+    --table-border-color: var(--secondary-700);
+}

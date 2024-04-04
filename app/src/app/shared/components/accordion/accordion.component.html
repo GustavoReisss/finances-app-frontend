@@ -1,0 +1,11 @@
+<div class="relative cursor-pointer" (click)="toggleContent()">
+    <ng-content select="[summary]"></ng-content>
+    <span class="absolute transition -translate-y-1/2 material-symbols-outlined top-1/2 right-1"
+        [class.rotate-180]="openState()">keyboard_arrow_down</span>
+</div>
+
+@if(openState()) {
+<div [@slide] class="overflow-hidden">
+    <ng-content></ng-content>
+</div>
+}

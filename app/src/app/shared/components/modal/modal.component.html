@@ -1,0 +1,17 @@
+@if(open()) {
+
+@if(backdrop()) {
+<div id="backdrop" (click)="closeModal()" [@backdropDelay]></div>
+}
+
+<div id="modal" class="bg-background-400 relative {{ _positionStyle() }} {{ userClasses()}} overflow-auto"
+    [@modalChangeVisibility]>
+    <button class="absolute transition h-7 w-7 top-1 right-1 hover:scale-110" (click)="closeModal()">
+        <span class="material-symbols-outlined icon-bold">
+            close
+        </span>
+    </button>
+
+    <ng-content></ng-content>
+</div>
+}

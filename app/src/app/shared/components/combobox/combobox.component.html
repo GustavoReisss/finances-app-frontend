@@ -1,0 +1,104 @@
+<div
+  class="w-[inherit] group-[.ng-dirty.ng-touched.ng-invalid]:*:border-danger-500 group-[.ng-dirty.ng-touched.ng-invalid]:*:text-danger-500"
+>
+  <div
+    [title]="selectedOption()?.label || placeholder()"
+    class="
+    border rounded-md border-{{ color }}-500
+    cursor-pointer flex justify-between items-center pl-4 pr-2"
+    [class.opacity-70]="disabled"
+    (click)="!disabled && toggle()"
+    cdkOverlayOrigin
+    #trigger
+    #origin="cdkOverlayOrigin"
+  >
+    <span class="block py-1 pr-2 text-lg truncate">
+      @if(selectedOption()) {
+      {{ selectedOption()!.label }}
+      } @else {
+      <span class="opacity-65">
+        {{ placeholder() }}
+      </span>
+      }
+    </span>
+    <span
+      class="text-lg transition-transform duration-200 material-symbols-outlined opacity-55"
+      [class.rotate-180]="isOpen"
+    >
+      {{ isOpen ? "collapse_all" : "expand_all" }}
+    </span>
+  </div>
+
+  <!-- <button (click)="teste(trigger)">oi</button> -->
+
+  <ng-template
+    cdkConnectedOverlay
+    [cdkConnectedOverlayWidth]="comboboxWidth"
+    [cdkConnectedOverlayOrigin]="origin"
+    [cdkConnectedOverlayOpen]="isOpen"
+    [cdkConnectedOverlayScrollStrategy]="scrollStrategy"
+    (overlayOutsideClick)="isOpen = false"
+  >
+    <div
+      class="my-1 w-full bg-background-500 rounded-md border border-{{
+        color
+      }}-500 text-lg shadow-xl"
+    >
+      <div class="border-b border-{{ color }}-500 pl-3 flex items-center">
+        <span class="text-2xl material-symbols-outlined opacity-55">
+          search
+        </span>
+        <input
+          type="text"
+          [ngModel]="filter()"
+          (ngModelChange)="filter.set($event)"
+          class="w-full inline-block bg-[transparent] outline-none py-1 pl-1"
+          placeholder="Buscar..."
+        />
+      </div>
+
+      <ul
+        class="px-2 py-2 max-h-40 overflow-y-auto scrollbar scrollbar-track-[transparent] scrollbar-thumb-background-300"
+      >
+        @if(canAddOption()) {
+        <li
+          (click)="emitCreateOption()"
+          class="flex items-center gap-1 py-1 pl-1 pr-2 transition duration-300 rounded-md cursor-pointer hover:bg-background-300"
+        >
+          <span class="w-6 text-2xl material-symbols-outlined"> add </span>
+
+          {{ creationOptionLabel() }}
+        </li>
+        } @for (option of filteredOptions(); track option.label) {
+        <li class="w-full inline-grid grid-cols-[1fr_auto] gap-1">
+          <div
+            [title]="option.label"
+            (click)="setOption(option)"
+            class="grid grid-cols-[1.5rem_1fr] w-full gap-1 py-1 pl-1 pr-2 truncate transition duration-300 rounded-md cursor-pointer item s-center hover:bg-background-300"
+          >
+            <span class="text-2xl material-symbols-outlined">
+              @if(selectedOption() === option) { done }
+            </span>
+
+            <span class="truncate">
+              {{ option.label }}
+            </span>
+          </div>
+
+          @if(canRemoveOption()) {
+          <div (click)="emitDeleteOption(option)">
+            <span
+              class="w-6 h-8 text-2xl transition-all rounded-md cursor-pointer material-symbols-outlined text-danger-500 hover:bg-danger-500/20"
+            >
+              close
+            </span>
+          </div>
+          }
+        </li>
+        } @empty { @if(!canAddOption()) {
+        <li>{{ emptyMessage() }}</li>
+        } }
+      </ul>
+    </div>
+  </ng-template>
+</div>

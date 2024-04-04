@@ -1,0 +1,31 @@
+.apexcharts-tooltip-title {
+    background: hsl(var(--background-500)) !important;
+    border-color: hsl(var(--background-600)) !important;
+    color: hsl(var(--text-500));
+}
+
+.apexcharts-tooltip {
+    background: hsla(var(--background-500) / 0.9) !important;
+    border-color: hsl(var(--background-600)) !important;
+    color: hsl(var(--text-500));
+}
+
+.apexcharts-xaxis-label,
+.apexcharts-yaxis-label {
+    fill: hsl(var(--text-500));
+}
+
+
+.apexcharts-menu {
+    background: hsla(var(--background-600) / 0.9) !important;
+    border-color: hsl(var(--background-500)) !important;
+    color: hsl(var(--text-500));
+
+    .apexcharts-menu-item {
+        font-size: 1em;
+
+        &:hover {
+            background: hsla(var(--background-400) / 0.9) !important;
+        }
+    }
+}

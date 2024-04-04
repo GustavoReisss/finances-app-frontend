@@ -1,0 +1,19 @@
+<div class="flex gap-[2px]">
+    <button class="grid w-10 h-10 rounded-full place-items-center hover:bg-background-400"
+        (click)="increasePageNumber(-1)">
+        <span class="material-symbols-outlined text-3xl" [style.font-variation-settings]="arrowStyle">
+            keyboard_arrow_left
+        </span>
+    </button>
+    @for (option of options(); track option) {
+    <button (click)="setPage(option)" class="px-1 rounded-md min-w-9 text-lg text-center leading-none"
+        [class.pointer-events-none]="option === '...'" [class.bg-secondary-500]="option === currentPage()"
+        [class.hover:bg-background-300]="option !== currentPage()">{{option}}</button>
+    }
+    <button class="grid w-10 h-10 rounded-full place-items-center hover:bg-background-400"
+        (click)="increasePageNumber(1)">
+        <span class="material-symbols-outlined text-3xl" [style.font-variation-settings]="arrowStyle">
+            keyboard_arrow_right
+        </span>
+    </button>
+</div>

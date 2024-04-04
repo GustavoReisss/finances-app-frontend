@@ -1,0 +1,30 @@
+<div class="px-5 py-5">
+  <h1 class="mb-5 font-bold">Adicionar nova Categoria de Pagamento</h1>
+
+  <form [formGroup]="categoriaPagamentoForm">
+    <label class="block mb-3">
+      Categoria Pagamento
+      <app-select
+        [options]="tiposPagamentos()"
+        labelKey="descricao"
+        valueKey="descricao"
+        formControlName="tipoPagamento"
+        placeholder="Tipo pagamento..."
+      ></app-select>
+    </label>
+
+    <label>
+      Título
+      <input
+        appInput
+        type="text"
+        formControlName="descricao"
+        placeholder="Tipo pagamento..."
+      />
+    </label>
+
+    <div class="flex justify-end mt-5">
+      <button appButton (click)="salvarNovaOpcao()">Cadastrar</button>
+    </div>
+  </form>
+</div>

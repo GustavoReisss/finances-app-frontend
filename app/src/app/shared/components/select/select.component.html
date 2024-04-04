@@ -1,0 +1,67 @@
+<div
+  class="w-[inherit] group-[.ng-dirty.ng-touched.ng-invalid]:*:border-danger-500 group-[.ng-dirty.ng-touched.ng-invalid]:*:text-danger-500"
+>
+  <div
+    [title]="selectedOption()?.label || placeholder"
+    class="
+    border rounded-md border-{{ color }}-500
+    cursor-pointer flex justify-between items-center pl-4 pr-2"
+    [class.opacity-70]="disabled"
+    (click)="!disabled && toggle()"
+    cdkOverlayOrigin
+    #trigger
+    #origin="cdkOverlayOrigin"
+  >
+    <span class="block py-1 pr-2 text-lg truncate">
+      @if(selectedOption()) {
+      {{ selectedOption()!.label }}
+      } @else {
+      <span class="opacity-65">
+        {{ placeholder }}
+      </span>
+      }
+    </span>
+    <span
+      class="text-lg transition-transform duration-200 material-symbols-outlined opacity-55"
+      [class.rotate-180]="isOpen"
+    >
+      keyboard_arrow_down
+    </span>
+  </div>
+
+  <ng-template
+    cdkConnectedOverlay
+    [cdkConnectedOverlayWidth]="comboboxWidth"
+    [cdkConnectedOverlayOrigin]="origin"
+    [cdkConnectedOverlayOpen]="isOpen"
+    (overlayOutsideClick)="isOpen = false"
+  >
+    <div
+      class="my-1 w-full bg-background-500 rounded-md border border-{{
+        color
+      }}-500 text-lg shadow-xl"
+    >
+      <ul
+        class="px-2 py-2 max-h-40 overflow-y-auto scrollbar scrollbar-track-[transparent] scrollbar-thumb-background-300"
+      >
+        @for (option of options(); track option.label) {
+        <li
+          [title]="option.label"
+          (click)="setOption(option)"
+          class="flex items-center gap-1 py-1 pl-1 pr-2 transition duration-300 rounded-md cursor-pointer hover:bg-background-300"
+        >
+          <span class="w-6 text-2xl material-symbols-outlined">
+            @if(selectedOption() === option) { done }
+          </span>
+
+          <span class="truncate">
+            {{ option.label }}
+          </span>
+        </li>
+        } @empty {
+        <li>Sem opções no momento.</li>
+        }
+      </ul>
+    </div>
+  </ng-template>
+</div>

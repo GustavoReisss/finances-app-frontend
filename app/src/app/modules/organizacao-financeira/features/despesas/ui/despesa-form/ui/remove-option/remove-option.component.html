@@ -1,0 +1,12 @@
+<div class="grid h-full gap-4 px-5 py-5 min-h-36 min-w-80">
+    <h1 class="my-2 font-bold">Deletar Opção</h1>
+
+    <section>
+        <p class="">Deseja deletar permanentemente a opção:</p>
+        <p class="ml-5 font-bold list-item">{{ option().label }}</p>
+    </section>
+
+    <div class="flex items-end justify-end w-full h-full">
+        <button class="h-min" appButton (click)="deleteOption()">Confirmar</button>
+    </div>
+</div>

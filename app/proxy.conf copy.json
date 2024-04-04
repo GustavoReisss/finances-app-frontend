@@ -1,0 +1,11 @@
+{
+    "/proxy-lambda-auth": {
+        "target": "https://6z3wq2mkrx7zu6psjmp7v2isve0zkaue.lambda-url.sa-east-1.on.aws",
+        "secure": false,
+        "changeOrigin": true,
+        "logLevel": "debug",
+        "pathRewrite": {
+            "^/proxy-lambda-auth": ""
+        }
+    }
+}

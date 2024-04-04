@@ -1,0 +1,8 @@
+<div class="
+    w-[inherit] border rounded-md border-{{color}}-500
+    focus-within:ring-2 ring--{{color}}-500" [class.opacity-70]="disabled">
+
+    <input [value]="value()" (change)="onChange(inputElement.value)" #inputElement type="text"
+        class="bg-[transparent] text-lg w-full ps-4 py-1 outline-none" [placeholder]="placeholder"
+        [disabled]="disabled">
+</div>

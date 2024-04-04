@@ -1,0 +1,29 @@
+.resize-vertical {
+    resize: vertical;
+
+    &::-webkit-resizer {
+        background-color: hsl(var(--background-600));
+        background-image: url('../assets/resize_vertical.svg');
+        background-size: contain;
+    }
+}
+
+.resize-horizontal {
+    resize: horizontal;
+
+    &::-webkit-resizer {
+        background-color: hsl(var(--background-600));
+        background-image: url('../assets/resize_horizontal.svg');
+        background-size: contain;
+    }
+}
+
+.resize-both {
+    resize: both;
+
+    &::-webkit-resizer {
+        background-color: hsl(var(--background-600));
+        background-image: url('../assets/resize_both.svg');
+        background-size: contain;
+    }
+}

@@ -1,0 +1,35 @@
+<div class="relative h-full transition-all bg-background-600" [style.width]="open() ? '13rem' : '3.5rem'">
+
+    <div (click)="open.set(!open())" class="flex justify-center w-full px-2 pt-2 cursor-pointer"
+        [style.justify-content]="open() ? 'flex-end' : 'center'">
+        <span class="text-2xl leading-none material-symbols-outlined">
+            menu
+        </span>
+    </div>
+
+    <header class="py-3 mb-2 overflow-hidden">
+        <div class="grid grid-cols-[2.5rem_auto] gap-3 items-center px-2">
+            <span class="px-2 mx-auto text-xl font-bold text-center border rounded-md border-text-500 w-min">$</span>
+            <p class="text-nowrap">Finances App</p>
+        </div>
+    </header>
+
+    <div class="h-[1px] w-full bg-background-300"></div>
+
+    <nav class="pt-5 overflow-hidden">
+        <ul class="px-2">
+            @for(item of menuItems(); track $index) {
+
+            <li class="grid grid-cols-[2.5rem_auto] gap-3 items-center transition-all hover:bg-primary-700 rounded-md py-2 cursor-pointer"
+                [routerLink]="item.route" [title]="item.label" routerLinkActive="bg-primary-700/25">
+                <span class="text-2xl leading-none text-center material-symbols-outlined">
+                    {{ item.icon }}
+                </span>
+
+                <p class="text-nowrap">{{ item.label }}</p>
+            </li>
+            }
+        </ul>
+    </nav>
+
+</div>

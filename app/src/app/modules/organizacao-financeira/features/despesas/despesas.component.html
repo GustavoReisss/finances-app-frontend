@@ -1,0 +1,58 @@
+<div class="container">
+  <app-despesa-form
+    (despesaCreated)="handleDespesaCreated($event)"
+  ></app-despesa-form>
+</div>
+
+<div class="container pb-4">
+  <h1 class="my-5 text-2xl font-bold">Despesas</h1>
+
+  <div class="overflow-auto">
+    <table class="w-full table-primary">
+      <thead>
+        <tr>
+          <!-- <th>ID</th> -->
+          <th>Descrição</th>
+          <th>Valor</th>
+          <th>Tipo Pagamento</th>
+          <th>Categoria Pagamento</th>
+          <th>Parcelado</th>
+          <th>Dia Pagamento</th>
+          <th>Meses Recorrência</th>
+          <th>Delete</th>
+        </tr>
+      </thead>
+      <tbody class="whitespace-nowrap">
+        @for(despesa of despesas(); track $index) {
+        <tr>
+          <!-- <td>{{ despesa.despesaId }}</td> -->
+          <td>
+            <input
+              type="text"
+              class="bg-[transparent] focus-visible:outline-none focus:drop-shadow-sm focus:ring-primary-500"
+              [value]="despesa.descricao"
+              #inputDescricao
+            />
+          </td>
+          <td>{{ despesa.valor | currency : "BRL" }}</td>
+          <td>{{ despesa.tipoPagamento }}</td>
+          <td>{{ despesa.categoriaPagamento }}</td>
+          <td>{{ despesa.parcelado }}</td>
+          <td>{{ despesa.diaPagamento }}</td>
+          <td>{{ despesa.mesesRecorrencia }}</td>
+          <td class="inline-flex justify-center w-full">
+            <button
+              (click)="deleteDespesa(despesa)"
+              class="w-6 h-6 transition rounded-full hover:bg-danger-500/20 hover:outline hover:outline-danger-500/30"
+            >
+              <span class="material-symbols-outlined text-danger-500"
+                >delete_forever</span
+              >
+            </button>
+          </td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>

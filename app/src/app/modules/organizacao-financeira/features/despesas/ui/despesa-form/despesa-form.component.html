@@ -1,0 +1,217 @@
+<header class="pb-2 border-b border-text-500/20">
+  <h1 class="mb-3 text-2xl font-bold">Nova Despesa</h1>
+  <!-- <p>
+    Esqueça as preocupações com custos futuros! Registre seus gastos sem
+    esforço. Simplifique sua vida agora!
+  </p> -->
+</header>
+
+<form [formGroup]="despesaForm" class="container w-full mb-5">
+  <div class="py-4 border-b border-primary-700">
+    <h2 class="pb-2 text-lg font-bold text-primary-500">Informações Gerais</h2>
+    <div class="grid grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-4">
+      <label>
+        Descrição
+        <input
+          appInput
+          class="w-full"
+          formControlName="descricao"
+          placeholder="Despesa..."
+          type="text"
+        />
+      </label>
+
+      <label
+        >Valor
+        <input
+          appInput
+          class="w-full"
+          type="number"
+          placeholder="Valor"
+          formControlName="valor"
+        />
+      </label>
+    </div>
+  </div>
+
+  <div class="py-4 border-b border-primary-700">
+    <h2 class="pb-2 text-lg font-bold text-primary-500">Tipo de Despesa</h2>
+
+    <div class="grid gap-3">
+      <div class="flex gap-5">
+        @for(tipo of tipoPagamentoOptions; track $index) {
+        <label class="inline-flex items-center gap-2">
+          <app-checkbox
+            (valueChange)="handleTipoPagamentoValueChange(tipo)"
+            [checked]="tipoPagamentoSelecionado() === tipo"
+          ></app-checkbox>
+          {{ tipo }}
+        </label>
+        }
+      </div>
+
+      <div>
+        <label>
+          <span [class.opacity-50]="!tipoPagamentoSelecionado()"
+            >Categoria Pagamento</span
+          >
+          <app-combobox
+            [options]="categoriasPagamentosDisponiveis()"
+            formControlName="categoriaPagamento"
+            (removeOption)="setOptionToDelete($event, 'categoriaPagamento')"
+            (addOption)="changeModalState('categoriaPagamento', true)"
+            [canAddOption]="true"
+            [canRemoveOption]="true"
+          ></app-combobox>
+        </label>
+      </div>
+    </div>
+  </div>
+
+  @if(tipoPagamentoSelecionado() === 'Recorrente') {
+  <div class="py-4 border-b border-primary-700">
+    <h2 class="pb-2 text-lg font-bold text-primary-500">
+      Frequência de Pagamento
+    </h2>
+
+    <div class="flex gap-5">
+      @for(frequencia of frequenciasOptions; track $index) {
+      <label class="inline-flex items-center gap-2">
+        <app-checkbox
+          (valueChange)="handleFrequenciaValueChange(frequencia)"
+          [checked]="frequenciaSelecionada() === frequencia"
+        ></app-checkbox>
+        {{ frequencia }}
+      </label>
+      }
+    </div>
+
+    <ng-container formGroupName="detalhesFrequencia">
+      @if(frequenciaSelecionada() === "Mensal") {
+
+      <div class="pt-3">
+        <label>
+          Dia Pagamento
+          <input
+            appInput
+            class="w-full"
+            type="number"
+            max="31"
+            min="1"
+            placeholder="Dia"
+            formControlName="diaPagamento"
+          />
+        </label>
+      </div>
+
+      } @else if (frequenciaSelecionada() === "Semanal") {
+      <div class="pt-2">
+        <label>
+          Dia da Semana
+          <app-combobox
+            [options]="daysOptions"
+            labelKey="label"
+            valueKey="value"
+            formControlName="diaSemana"
+          ></app-combobox>
+        </label>
+      </div>
+
+      } @else if (frequenciaSelecionada() === "Outro") {
+
+      <div class="grid gap-2 pt-3">
+        <div class="grid items-end grid-cols-2 gap-4">
+          <label>
+            A cada
+            <input
+              appInput
+              class="w-36"
+              type="number"
+              min="1"
+              placeholder="1, 2, 3..."
+              formControlName="quantidade"
+              (ngModelChange)="updateMinDate()"
+            />
+          </label>
+          <label>
+            <app-combobox
+              [options]="['Dias', 'Semanas', 'Meses', 'Anos']"
+              placeholder="Dia(s), Semana(s), Mês(es) ou Ano(s)"
+              formControlName="unidade"
+              (ngModelChange)="updateMinDate()"
+            ></app-combobox>
+          </label>
+        </div>
+
+        <div [formGroup]="despesaForm">
+          <label>
+            <span
+              [class.opacity-70]="despesaForm.get('ultimoPagamento')?.disabled"
+            >
+              Contabilizar despesa a partir de
+            </span>
+
+            <app-date-picker
+              [min]="minDate"
+              [max]="maxDate"
+              formControlName="ultimoPagamento"
+            ></app-date-picker>
+            @if (minDate) {
+            <p class="text-xs font-bold">
+              Data Mínima: {{ minDate | date : "dd/MM/YYYY" }}
+            </p>
+            }
+          </label>
+        </div>
+      </div>
+
+      }
+    </ng-container>
+  </div>
+
+  } @else if (tipoPagamentoSelecionado() === 'Parcelado') {
+
+  <h1>Parcelado</h1>
+
+  } @else if (tipoPagamentoSelecionado() === 'À Vista') {
+
+  <h1>À Vista</h1>
+
+  }
+</form>
+
+<div class="flex gap-2">
+  <!-- <button appButton color="danger" class="w-28" (click)="clearForm()">
+    Limpar
+  </button> -->
+  <button appButton class="w-full font-bold" (click)="save()">
+    Cadastrar Despesa
+  </button>
+</div>
+
+<!-- <pre>
+  {{ despesaForm.value | json }}
+</pre> -->
+
+<app-modal
+  class="rounded-md"
+  [open]="modalStates().deleteOption"
+  (close)="changeModalState('deleteOption', false)"
+>
+  <app-remove-option
+    [option]="optionToDelete()"
+    (optionDeleted)="optionDeletedHandler()"
+  ></app-remove-option>
+</app-modal>
+
+<app-modal
+  class="w-[80%] max-w-96 rounded-md"
+  [open]="modalStates().categoriaPagamento"
+  (close)="changeModalState('categoriaPagamento', false)"
+>
+  <app-add-categoria-pagamento
+    [tiposPagamentos]="tiposPagamentos()"
+    [tipoPagamentoSelecionado]="tipoPagamentoSelecionado()"
+    (categoriaPagamentoCreated)="handleCategoriaPagamentoCreated($event)"
+  ></app-add-categoria-pagamento>
+</app-modal>
