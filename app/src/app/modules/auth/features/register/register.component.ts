@@ -4,6 +4,7 @@ import { HttpService } from '../../../../shared/services/http.service';
 import { InputDirective } from '../../../../shared/directives/input/input.directive';
 import { ButtonDirective } from '../../../../shared/directives/button/button.directive';
 import { Router, RouterLink } from '@angular/router';
+import { finalize } from 'rxjs';
 
 
 const INTERNAL_SERVER_ERROR = "Um erro desconhecido aconteceu, tente novamente em breve!"
@@ -21,7 +22,7 @@ export class RegisterComponent {
   httpService = inject(HttpService)
   fb = inject(FormBuilder)
   router = inject(Router)
-
+  loading = signal(false)
   errorMessage = signal("")
 
   userRegisterForm = this.fb.group({
@@ -51,10 +52,16 @@ export class RegisterComponent {
 
     delete userFormValue["confirmPassword"]
 
-    this.httpService.post("register", userFormValue).subscribe({
-      next: (v) => this.router.navigate(["/"]),
-      error: (e) => this.errorMessage.set(e.error["error_message"] || INTERNAL_SERVER_ERROR)
-    })
+    this.loading.set(true)
+
+    this.httpService.post("register", userFormValue)
+      .pipe(
+        finalize(() => this.loading.set(false))
+      )
+      .subscribe({
+        next: (v) => this.router.navigate(["/"]),
+        error: (e) => this.errorMessage.set(e.error["error_message"] || INTERNAL_SERVER_ERROR)
+      })
   }
 
 }

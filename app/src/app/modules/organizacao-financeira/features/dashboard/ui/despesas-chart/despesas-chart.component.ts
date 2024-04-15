@@ -1,7 +1,6 @@
-import { Component, computed, effect, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, input, OnInit, signal } from '@angular/core';
 import {
   ApexAnnotations,
-  ApexAxisChartSeries,
   ApexChart,
   ApexFill,
   ApexGrid,
@@ -14,6 +13,8 @@ import {
 import { pt_br } from '../../../../../../shared/utils/apexchart-locales/pt_br';
 import { CurrencyPipe } from '@angular/common';
 import { DespesaFutura } from '../../dashboard.component';
+import { debounceTime, delay, Observable, Subscription, tap } from 'rxjs';
+import { SkeletonLoaderComponent } from '../../../../../../shared/components/skeleton-loader/skeleton-loader.component';
 
 
 const HOUR_IN_MS = 3600000
@@ -21,11 +22,25 @@ const HOUR_IN_MS = 3600000
 @Component({
   selector: 'app-despesas-chart',
   standalone: true,
-  imports: [NgApexchartsModule],
+  imports: [NgApexchartsModule, SkeletonLoaderComponent],
   templateUrl: './despesas-chart.component.html',
-  styleUrl: './despesas-chart.component.scss'
+  styleUrl: './despesas-chart.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class DespesasChartComponent {
+export class DespesasChartComponent implements OnInit {
+  updateChart = input.required<Observable<void>>()
+  updateSub!: Subscription
+  show = signal(true)
+
+  ngOnInit(): void {
+    this.updateChart().pipe(
+      debounceTime(100),
+      tap(() => this.show.set(false)),
+      delay(350),
+    )
+      .subscribe(() => this.show.set(true))
+  }
+
   loading = input(false)
   currencyPipe = new CurrencyPipe("pt")
 

@@ -1,5 +1,5 @@
 import { Component, EventEmitter, OnInit, Output, computed, effect, inject, signal } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CheckboxComponent } from '../../../../../../shared/components/checkbox/checkbox.component';
 import { ComboboxComponent, ComboboxOption } from '../../../../../../shared/components/combobox/combobox.component';
 import { InputDirective } from '../../../../../../shared/directives/input/input.directive';
@@ -7,7 +7,7 @@ import { ButtonDirective } from '../../../../../../shared/directives/button/butt
 import { HttpService } from '../../../../../../shared/services/http.service';
 import { TipoPagamento } from '../../../../../../shared/interfaces/tipo-pagamento.interface';
 import { Despesa } from '../../../../../../shared/interfaces/despesa.interface';
-import { DespesaFormService } from './data-service/despesa-form.service';
+import { DespesaFormService } from './services/despesa-form.service';
 import { DatePipe, JsonPipe } from '@angular/common';
 import { ModalComponent } from '../../../../../../shared/components/modal/modal.component';
 import { RemoveOptionComponent } from './ui/remove-option/remove-option.component';
@@ -18,6 +18,9 @@ export type OptionsToDelete = "categoriaPagamento"
 type tipoPagamento = "Recorrente" | "Parcelado" | "À Vista"
 type Frequencia = "Mensal" | "Semanal" | "Outro"
 type UnidadeFrequencia = "Dias" | "Semanas" | "Meses" | "Anos"
+
+const TODAY = new Date()
+const FIRST_DAY_OF_THE_MONTH = new Date(TODAY.getFullYear(), TODAY.getMonth(), 1)
 
 @Component({
   selector: 'app-despesa-form',
@@ -54,9 +57,7 @@ export class DespesaFormComponent implements OnInit {
     "tipoPagamento": ["", [Validators.required]],
     "categoriaPagamento": [{ value: "", disabled: true }, [Validators.required]],
     "descricao": ["", [Validators.required]],
-    "parcelado": [false, [Validators.required]],
     "valor": ["", [Validators.required]],
-    "frequencia": ["", [Validators.required]],
     "ultimoPagamento": "",
     "detalhesFrequencia": this.fb.group({})
   })
@@ -117,9 +118,7 @@ export class DespesaFormComponent implements OnInit {
   clearForm() {
     this.despesaForm.patchValue({
       "descricao": "",
-      "parcelado": false,
       "valor": "",
-      "frequencia": "",
       "ultimoPagamento": "",
     })
 
@@ -144,7 +143,7 @@ export class DespesaFormComponent implements OnInit {
       "Anos": (anos: number) => currentDate.setFullYear(currentDate.getFullYear() - anos),
     }
 
-    let detalhesFrequencia = this.despesaForm.get("detalhesFrequencia")?.value as { quantidade: number, unidade: string }
+    let detalhesFrequencia = this.despesaForm.get("detalhesFrequencia")!.value as { quantidade: number, unidade: string }
 
     const quantidade = detalhesFrequencia?.quantidade
     const unidade = detalhesFrequencia?.unidade
@@ -155,7 +154,10 @@ export class DespesaFormComponent implements OnInit {
     }
 
     dateHandlers[unidade as UnidadeFrequencia](Number(quantidade))
-    this.minDate = currentDate.toLocaleDateString('en-ca')
+    this.minDate = (
+      FIRST_DAY_OF_THE_MONTH < currentDate ? FIRST_DAY_OF_THE_MONTH : currentDate
+    )
+      .toLocaleDateString('en-ca')
   }
 
   /* NEW OPTIONS EVENT HANDLERS */
@@ -191,7 +193,6 @@ export class DespesaFormComponent implements OnInit {
   setOptionToDelete(option: ComboboxOption, field: OptionsToDelete) {
     this.typeOfOptionToDelete = field
     this.optionToDelete.set(option)
-    console.log(this.optionToDelete())
     this.changeModalState("deleteOption", true)
   }
 
@@ -253,13 +254,44 @@ export class DespesaFormComponent implements OnInit {
       categoriaControlState = "disable"
     }
 
-    this.tipoPagamentoSelecionado.set(newValue)
     this.despesaForm.patchValue({
       "tipoPagamento": newValue,
       "categoriaPagamento": ""
     })
 
     categoriaControl![categoriaControlState]()
+
+    const extraControls: { [key in tipoPagamento | ""]: any } = {
+      "Parcelado": {
+        "frequencia": "",
+        "quantidadeParcelas": 1,
+        "parcelaAtual": 1,
+      },
+      "Recorrente": {
+        "frequencia": "",
+      },
+      "À Vista": {},
+      "": {}
+    }
+
+    const addControls = (fg: FormGroup, newControls: { [key: string]: any }) => {
+      Object.entries(newControls).forEach(([controlName, initialValue]) => {
+        let control = (initialValue instanceof FormGroup) ? initialValue : new FormControl(initialValue, [Validators.required])
+        fg.addControl(controlName, control)
+      })
+    }
+
+    const removeControls = (fg: FormGroup, controls: string[]) => {
+      controls.forEach(control => fg.removeControl(control))
+    }
+
+    removeControls(this.despesaForm, Object.keys(extraControls[this.tipoPagamentoSelecionado()]))
+    addControls(this.despesaForm, extraControls[newValue])
+    this.tipoPagamentoSelecionado.set(newValue)
+    this.handleFrequenciaValueChange("")
+
+
+    this.minDate = (newValue === 'À Vista') ? FIRST_DAY_OF_THE_MONTH.toLocaleDateString('en-ca') : ''
   }
 
   handleFrequenciaValueChange(newValue: Frequencia | "") {
@@ -269,8 +301,10 @@ export class DespesaFormComponent implements OnInit {
 
     this.frequenciaSelecionada.set(newValue)
 
+    let frequenciaControl = this.despesaForm.get("frequencia")
+    if (frequenciaControl) (frequenciaControl as AbstractControl<string>).setValue(newValue)
+
     this.despesaForm.patchValue({
-      "frequencia": newValue,
       "ultimoPagamento": ""
     })
   }
@@ -338,6 +372,11 @@ export class DespesaFormComponent implements OnInit {
   save() {
     const markAsDirtAndTouched = (fg: FormGroup) => {
       for (let control of Object.values(fg.controls)) {
+        if (control instanceof FormGroup) {
+          markAsDirtAndTouched(control)
+          continue
+        }
+
         control.markAsDirty()
         control.markAllAsTouched()
       }

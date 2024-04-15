@@ -1,9 +1,63 @@
-<button appButton routerLink="../despesas">Acessar Despesas</button>
+<div class="relative w-full h-full">
+  <button appButton routerLink="../despesas">Acessar Despesas</button>
 
-<div class="px-2 py-3 rounded-md bg-background-400">
-  <h1 class="text-2xl font-bold text-center">Despesas do mês</h1>
-  <app-despesas-chart
-    [loading]="loading()"
-    [despesas]="despesas()"
-  ></app-despesas-chart>
+  <div
+    class="absolute right-0 grid w-12 h-12 transition-transform rounded-full shadow-2xl cursor-pointer place-items-center bottom-5 bg-secondary-700 hover:scale-110"
+    cdkOverlayOrigin
+    #trigger
+    #origin="cdkOverlayOrigin"
+    (click)="openSettings.set(!openSettings())"
+  >
+    <span
+      class="ml-[1px] mt-[3px] text-4xl text-text-300/80 material-symbols-rounded icon-bold"
+      >inbox_customize</span
+    >
+  </div>
+
+  <ng-template
+    cdkConnectedOverlay
+    [cdkConnectedOverlayOrigin]="origin"
+    [cdkConnectedOverlayOpen]="openSettings()"
+  >
+    <div
+      class="grid gap-2 px-1 py-2 my-3 rounded-md me-3 max-w-48 max-h-60 bg-secondary-700"
+    >
+      @for(widget of widgets(); track $index) {
+      <p
+        class="px-3 py-1 transition-colors rounded-md cursor-pointer hover:bg-secondary-400"
+        [class.bg-secondary-500]="widget.active"
+        (click)="toggleWidget(widget)"
+      >
+        {{ widget.name }}
+      </p>
+      }
+    </div>
+  </ng-template>
+
+  <app-grid
+    [layout]="layout"
+    [updateLayout]="updateLayout.asObservable()"
+    (layoutUpdated)="layoutUpdated($event)"
+  >
+    @if (widgets()[0].active) {
+    <ng-container *appGridItem="widgets()[0].id; loading: loading()">
+      <h1 class="text-2xl font-bold text-center">Despesas do mês</h1>
+      <app-despesas-chart
+        [despesas]="despesas()"
+        [updateChart]="updateChart.asObservable()"
+      ></app-despesas-chart>
+    </ng-container>
+
+    } @if (widgets()[1].active) {
+    <div
+      *appGridItem="widgets()[1].id; loading: loading()"
+      class="relative grid w-full h-full px-2 py-5 rounded-md place-items-center bg-background-400"
+    >
+      <h1 class="pb-1 text-center h-min">Custo Mensal</h1>
+      <p class="text-4xl font-extrabold text-center h-min">
+        {{ custoMensal() | currency : "BRL" }}
+      </p>
+    </div>
+    }
+  </app-grid>
 </div>

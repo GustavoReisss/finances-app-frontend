@@ -1,5 +1,8 @@
+@if(show()) {
+<!-- Update chart size -->
+
 <div class="relative">
-  @if (loading()) {
+  <!-- @if (loading()) {
   <div
     class="absolute z-10 grid w-full h-full place-items-center bg-background-600/60"
   >
@@ -7,7 +10,8 @@
       <span class="material-symbols-outlined animate-spin"> refresh </span>
     </span>
   </div>
-  }
+  } -->
+  <app-skeleton-loader [loading]="loading()"></app-skeleton-loader>
   <apx-chart
     [series]="series()"
     [annotations]="chartOptions.annotations"
@@ -20,3 +24,4 @@
   >
   </apx-chart>
 </div>
+}

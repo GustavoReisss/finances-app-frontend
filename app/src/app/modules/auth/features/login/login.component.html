@@ -1,5 +1,5 @@
 <div class="p-4 border rounded-md border-primary-500 bg-background-300/50">
-  <h1 class="pb-8 text-2xl font-bold text-center">Login Humilde</h1>
+  <h1 class="pb-8 text-2xl font-bold text-center">Login</h1>
 
   <form [formGroup]="loginForm">
     <div class="grid gap-2">
@@ -23,12 +23,20 @@
     </div>
   </form>
 
-  <button appButton class="w-full my-10" (click)="login()">Entrar</button>
-  <button appButton class="w-full" (click)="logout()">Sair</button>
+  <button
+    appButton
+    [loading]="loading()"
+    class="w-full my-10"
+    (click)="login()"
+  >
+    Entrar
+  </button>
 
   <p class="text-center text-text-500/70">
     Ainda não tem uma conta?
-    <span class="font-bold ps-1 text-primary-500" routerLink="/auth/register"
+    <span
+      class="font-bold cursor-pointer ps-1 text-primary-500"
+      routerLink="/auth/register"
       >Registre-se!</span
     >
   </p>

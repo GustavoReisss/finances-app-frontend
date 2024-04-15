@@ -1,4 +1,4 @@
-import { Directive, computed, input } from '@angular/core';
+import { Directive, ElementRef, computed, effect, input } from '@angular/core';
 
 type colorVariants = "primary" | "danger" | "secondary" | "accent"
 
@@ -13,6 +13,12 @@ const variants: VarianteStyle = {
   danger: 'bg-danger-500 border-danger-500 hover:bg-danger-600',
 }
 
+const LoadingContent = `
+  <div class="w-full grid items-center">
+    <span class="material-symbols-outlined animate-spin"> progress_activity </span>
+  </div>
+`
+
 @Directive({
   selector: '[appButton]',
   standalone: true,
@@ -22,8 +28,31 @@ const variants: VarianteStyle = {
 })
 export class ButtonDirective {
   color = input<colorVariants>("primary")
+  loading = input<boolean>(false)
+  buttonContent = ""
 
   protected buttonClasses = computed(() =>
-    `rounded-md border py-1 px-5 transition cursor-pointer ${variants[this.color()]} disabled:opacity-60 disabled:hover:bg-[unset]`
+    `rounded-md border py-1 px-5 transition cursor-pointer ${variants[this.color()]} disabled:opacity-60 disabled:hover:bg-[unset] ` +
+    `${this.loading() ? `animate-pulse opacity-90` : ''}`
   )
+
+  constructor(private buttom: ElementRef) {
+  }
+
+  toggleLoading = effect(() => {
+    if (this.loading()) {
+      this.buttonContent = this.buttom.nativeElement.innerHTML;
+      this.buttom.nativeElement.innerHTML = LoadingContent
+      return
+    }
+
+    if (this.buttonContent) {
+      this.buttom.nativeElement.innerHTML = this.buttonContent;
+    }
+
+  }, { allowSignalWrites: true })
+
+  // ngOnInit() {
+  //   this.buttom.nativeElement.innerHTML = LoadingContent
+  // }
 }

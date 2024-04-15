@@ -4,6 +4,7 @@ import { HttpService } from '../../../../shared/services/http.service';
 import { InputDirective } from '../../../../shared/directives/input/input.directive';
 import { ButtonDirective } from '../../../../shared/directives/button/button.directive';
 import { Router, RouterLink } from '@angular/router';
+import { finalize } from 'rxjs';
 
 const INTERNAL_SERVER_ERROR = "Um erro desconhecido aconteceu, tente novamente em breve!"
 
@@ -21,6 +22,8 @@ export class LoginComponent {
 
   errorMessage = signal("")
 
+  loading = signal(false)
+
   loginForm = this.fb.group({
     userId: ['', [Validators.required]],
     password: ['', [Validators.required]]
@@ -34,14 +37,16 @@ export class LoginComponent {
       return
     }
 
+
+    this.loading.set(true)
     this.httpService.post('login', this.loginForm.value)
+      .pipe(
+        finalize(() => this.loading.set(false))
+      )
       .subscribe({
         next: (v) => this.router.navigate(["/"]),
-        error: (e) => this.errorMessage.set(e.error["error_message"] || INTERNAL_SERVER_ERROR)
+        error: (e) =>
+          this.errorMessage.set(e.error["error_message"] || INTERNAL_SERVER_ERROR)
       })
-  }
-
-  logout() {
-    this.httpService.post('logout', null).subscribe(res => console.log(res))
   }
 }

@@ -7,25 +7,24 @@
 <div class="container pb-4">
   <h1 class="my-5 text-2xl font-bold">Despesas</h1>
 
-  <div class="overflow-auto">
+  <div class="relative overflow-auto">
+    <app-skeleton-loader [loading]="fetchingDespesas()"></app-skeleton-loader>
     <table class="w-full table-primary">
       <thead>
         <tr>
-          <!-- <th>ID</th> -->
           <th>Descrição</th>
           <th>Valor</th>
           <th>Tipo Pagamento</th>
           <th>Categoria Pagamento</th>
-          <th>Parcelado</th>
-          <th>Dia Pagamento</th>
-          <th>Meses Recorrência</th>
+          <th>Quantidade Parcelas</th>
+          <th>Parcela Atual</th>
+          <!-- <th>Frequencia Pagamento</th> -->
           <th>Delete</th>
         </tr>
       </thead>
       <tbody class="whitespace-nowrap">
         @for(despesa of despesas(); track $index) {
         <tr>
-          <!-- <td>{{ despesa.despesaId }}</td> -->
           <td>
             <input
               type="text"
@@ -37,9 +36,9 @@
           <td>{{ despesa.valor | currency : "BRL" }}</td>
           <td>{{ despesa.tipoPagamento }}</td>
           <td>{{ despesa.categoriaPagamento }}</td>
-          <td>{{ despesa.parcelado }}</td>
-          <td>{{ despesa.diaPagamento }}</td>
-          <td>{{ despesa.mesesRecorrencia }}</td>
+          <td>{{ despesa?.quantidadeParcelas }}</td>
+          <td>{{ despesa?.parcelaAtual }}</td>
+          <!-- <td>{{ despesa?.detalhesFrequencia }}</td> -->
           <td class="inline-flex justify-center w-full">
             <button
               (click)="deleteDespesa(despesa)"

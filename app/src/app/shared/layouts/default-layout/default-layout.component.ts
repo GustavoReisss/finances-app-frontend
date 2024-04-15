@@ -1,9 +1,9 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { SideMenuComponent } from '../../components/side-menu/side-menu.component';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
-import { AsyncPipe } from '@angular/common';
-import { map } from 'rxjs';
+import { AsyncPipe, NgTemplateOutlet } from '@angular/common';
+import { map, Subscription } from 'rxjs';
 import { HorizontalMenuComponent } from '../../components/horizontal-menu/horizontal-menu.component';
 import { CdkScrollableModule } from '@angular/cdk/scrolling';
 
@@ -15,24 +15,35 @@ import { CdkScrollableModule } from '@angular/cdk/scrolling';
     HorizontalMenuComponent,
     SideMenuComponent,
     AsyncPipe,
-    CdkScrollableModule
+    CdkScrollableModule,
+    NgTemplateOutlet
   ],
   templateUrl: './default-layout.component.html',
   styleUrl: './default-layout.component.scss'
 })
-export class DefaultLayoutComponent {
+export class DefaultLayoutComponent implements OnInit, OnDestroy {
   showSelectedFeatures = signal(false)
   responsive = inject(BreakpointObserver)
+  lastPortraitState: null | boolean = null
 
-  portrait = this.responsive.observe(Breakpoints.HandsetPortrait)
-    .pipe(map(state => state.matches))
+  displayChangeSub!: Subscription
+
+  portrait = signal(false)
+
+  ngOnInit(): void {
+    this.displayChangeSub = this.responsive.observe(Breakpoints.HandsetPortrait)
+      .pipe(
+        map(state => state.matches)
+      ).subscribe(state => this.portrait.set(state))
+  }
 
   toggle() {
     this.showSelectedFeatures.set(!this.showSelectedFeatures())
   }
 
-  // ngOnInit(): void {
-  //   this.responsive.observe(Breakpoints.HandsetPortrait).subscribe(value => console.log(value))
-  // }
+  ngOnDestroy(): void {
+    this.displayChangeSub.unsubscribe()
+  }
+
 
 }

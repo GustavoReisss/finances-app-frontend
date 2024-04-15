@@ -157,7 +157,7 @@
               formControlName="ultimoPagamento"
             ></app-date-picker>
             @if (minDate) {
-            <p class="text-xs font-bold">
+            <p class="pt-1 text-xs font-bold">
               Data Mínima: {{ minDate | date : "dd/MM/YYYY" }}
             </p>
             }
@@ -170,13 +170,166 @@
   </div>
 
   } @else if (tipoPagamentoSelecionado() === 'Parcelado') {
+  <div class="py-4 border-b border-primary-700">
+    <h2 class="pb-2 text-lg font-bold text-primary-500">Parcelas</h2>
 
-  <h1>Parcelado</h1>
+    <div class="grid grid-cols-2 gap-5 w-max">
+      <div>
+        <label>
+          Quantidade de Parcelas
+          <input
+            appInput
+            class="w-full"
+            type="number"
+            min="1"
+            placeholder="Quantidade"
+            formControlName="quantidadeParcelas"
+          />
+        </label>
+      </div>
+
+      <div>
+        <label>
+          Parcela Atual
+          <input
+            appInput
+            class="w-full"
+            type="number"
+            min="1"
+            placeholder="Parcela"
+            formControlName="parcelaAtual"
+          />
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <div class="py-4 border-b border-primary-700">
+    <h2 class="pb-2 text-lg font-bold text-primary-500">
+      Frequência de Pagamento
+    </h2>
+
+    <div class="flex gap-5">
+      @for(frequencia of frequenciasOptions; track $index) {
+      <label
+        class="inline-flex items-center gap-2"
+        [class.text-danger-500]="
+          despesaForm.get('frequencia')?.invalid &&
+          despesaForm.get('frequencia')?.touched
+        "
+      >
+        <app-checkbox
+          (valueChange)="handleFrequenciaValueChange(frequencia)"
+          [checked]="frequenciaSelecionada() === frequencia"
+        ></app-checkbox>
+        {{ frequencia }}
+      </label>
+      }
+    </div>
+
+    <ng-container formGroupName="detalhesFrequencia">
+      @if(frequenciaSelecionada() === "Mensal") {
+
+      <div class="pt-3">
+        <label>
+          Dia Pagamento
+          <input
+            appInput
+            class="w-full"
+            type="number"
+            max="31"
+            min="1"
+            placeholder="Dia"
+            formControlName="diaPagamento"
+          />
+        </label>
+      </div>
+
+      } @else if (frequenciaSelecionada() === "Semanal") {
+      <div class="pt-2">
+        <label>
+          Dia da Semana
+          <app-combobox
+            [options]="daysOptions"
+            labelKey="label"
+            valueKey="value"
+            formControlName="diaSemana"
+          ></app-combobox>
+        </label>
+      </div>
+
+      } @else if (frequenciaSelecionada() === "Outro") {
+
+      <div class="grid gap-2 pt-3">
+        <div class="grid items-end grid-cols-2 gap-4">
+          <label>
+            A cada
+            <input
+              appInput
+              class="w-36"
+              type="number"
+              min="1"
+              placeholder="1, 2, 3..."
+              formControlName="quantidade"
+              (ngModelChange)="updateMinDate()"
+            />
+          </label>
+          <label>
+            <app-combobox
+              [options]="['Dias', 'Semanas', 'Meses', 'Anos']"
+              placeholder="Dia(s), Semana(s), Mês(es) ou Ano(s)"
+              formControlName="unidade"
+              (ngModelChange)="updateMinDate()"
+            ></app-combobox>
+          </label>
+        </div>
+
+        <div [formGroup]="despesaForm">
+          <label>
+            <span
+              [class.opacity-70]="despesaForm.get('ultimoPagamento')?.disabled"
+            >
+              Data da Parcela Atual
+            </span>
+
+            <app-date-picker
+              [min]="minDate"
+              [max]="maxDate"
+              formControlName="ultimoPagamento"
+            ></app-date-picker>
+            @if (minDate) {
+            <p class="pt-1 text-xs font-bold">
+              Data Mínima: {{ minDate | date : "dd/MM/YYYY" }}
+            </p>
+            }
+          </label>
+        </div>
+      </div>
+
+      }
+    </ng-container>
+  </div>
 
   } @else if (tipoPagamentoSelecionado() === 'À Vista') {
+  <div class="py-4 border-b border-primary-700">
+    <h2 class="pb-2 text-lg font-bold text-primary-500">Data da Pagamento</h2>
 
-  <h1>À Vista</h1>
+    <label>
+      <span [class.opacity-70]="despesaForm.get('ultimoPagamento')?.disabled">
+      </span>
 
+      <app-date-picker
+        [min]="minDate"
+        [max]="maxDate"
+        formControlName="ultimoPagamento"
+      ></app-date-picker>
+      @if (minDate) {
+      <p class="pt-1 text-xs font-bold">
+        Data Mínima: {{ minDate | date : "dd/MM/YYYY" }}
+      </p>
+      }
+    </label>
+  </div>
   }
 </form>
 

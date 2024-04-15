@@ -1,0 +1,46 @@
+<ktd-grid
+  [compactType]="'vertical'"
+  [cols]="cols"
+  [rowHeight]="rowHeight"
+  [layout]="layout"
+  [gap]="10"
+  [preventCollision]="false"
+  (layoutUpdated)="onLayoutUpdated($event)"
+  (resizeEnded)="updateGridItemOriginalWidthOnResize($event)"
+  (dragEnded)="setLayout($event.layout)"
+  [backgroundConfig]="backgroundConfig"
+  class="relative"
+>
+  @for(gridItem of gridItems(); track $index) {
+  <ktd-grid-item
+    [id]="gridItem.id"
+    class="px-4 py-2 rounded-md bg-background-400"
+  >
+    <app-skeleton-loader
+      class="rounded-md"
+      [loading]="gridItem.loading()"
+    ></app-skeleton-loader>
+    <span
+      ktdGridDragHandle
+      class="absolute top-0 left-0 z-10 p-2 material-symbols-outlined cursor-grab active:cursor-grabbing"
+      >drag_indicator</span
+    >
+
+    <ng-container [ngTemplateOutlet]="gridItem.template"></ng-container>
+
+    <span
+      ktdGridResizeHandle
+      class="absolute bottom-[-6px] z-20 right-[-1px] material-symbols-outlined rotate-[315deg] cursor-se-resize text-lg"
+      >filter_list</span
+    >
+
+    <ng-template ktdGridItemPlaceholder>
+      <div class="w-full h-full bg-primary-500"></div>
+    </ng-template>
+  </ktd-grid-item>
+  }
+</ktd-grid>
+
+<!-- <pre>
+  {{ layout | json }}
+</pre> -->

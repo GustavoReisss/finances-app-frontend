@@ -3,13 +3,16 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { HttpService } from '../../../../shared/services/http.service';
 import { Despesa } from '../../../../shared/interfaces/despesa.interface';
 import { DespesaFormComponent } from './ui/despesa-form/despesa-form.component';
+import { finalize } from 'rxjs';
+import { SkeletonLoaderComponent } from '../../../../shared/components/skeleton-loader/skeleton-loader.component';
 
 @Component({
   selector: 'app-despesas',
   standalone: true,
   imports: [
     CurrencyPipe,
-    DespesaFormComponent
+    DespesaFormComponent,
+    SkeletonLoaderComponent
   ],
   templateUrl: './despesas.component.html',
   styleUrl: './despesas.component.scss'
@@ -19,8 +22,17 @@ export class DespesasComponent implements OnInit {
 
   despesas = signal<Despesa[]>([])
 
+  fetchingDespesas = signal(false)
+
   ngOnInit() {
-    this.httpService.get<Despesa[]>("despesas").subscribe(res => this.despesas.set(res))
+    this.fetchDespesas()
+  }
+
+  fetchDespesas() {
+    this.fetchingDespesas.set(true)
+    this.httpService.get<Despesa[]>("despesas")
+      .pipe(finalize(() => this.fetchingDespesas.set(false)))
+      .subscribe(res => this.despesas.set(res))
   }
 
   handleDespesaCreated(despesa: Despesa[]) {

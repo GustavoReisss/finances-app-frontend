@@ -6,6 +6,7 @@ export interface Despesa {
     categoriaPagamento: string;
     valor: number | string
     diaPagamento: number | string;
-    mesesRecorrencia: number | string;
-    parcelado: boolean;
+    quantidadeParcelas?: number
+    parcelaAtual?: number
+    detalhesFrequencia?: Object
 }
