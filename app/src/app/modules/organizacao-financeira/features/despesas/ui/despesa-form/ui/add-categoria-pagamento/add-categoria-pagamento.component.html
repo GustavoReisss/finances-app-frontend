@@ -2,8 +2,10 @@
   <h1 class="mb-5 font-bold">Adicionar nova Categoria de Pagamento</h1>
 
   <form [formGroup]="categoriaPagamentoForm">
+    @if(tiposPagamentos().length) {
+
     <label class="block mb-3">
-      Categoria Pagamento
+      Tipo de Despesa
       <app-select
         [options]="tiposPagamentos()"
         labelKey="descricao"
@@ -12,6 +14,7 @@
         placeholder="Tipo pagamento..."
       ></app-select>
     </label>
+    }
 
     <label>
       Título

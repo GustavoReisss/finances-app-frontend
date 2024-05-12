@@ -7,17 +7,15 @@ import { ButtonDirective } from '../../../../../../shared/directives/button/butt
 import { HttpService } from '../../../../../../shared/services/http.service';
 import { TipoPagamento } from '../../../../../../shared/interfaces/tipo-pagamento.interface';
 import { Despesa } from '../../../../../../shared/interfaces/despesa.interface';
-import { DespesaFormService } from './services/despesa-form.service';
+import { DespesaService } from '../../services/despesa-service/despesa-form.service';
 import { DatePipe, JsonPipe } from '@angular/common';
 import { ModalComponent } from '../../../../../../shared/components/modal/modal.component';
 import { RemoveOptionComponent } from './ui/remove-option/remove-option.component';
 import { AddCategoriaPagamentoComponent } from './ui/add-categoria-pagamento/add-categoria-pagamento.component';
 import { DatePickerComponent } from '../../../../../../shared/components/date-picker/date-picker.component';
+import { daysOptions, Frequencia, frequenciasOptions, getMinDate, setDetalhesFrequenciaFields, tipoPagamento, UnidadeFrequencia } from '../../shared/despesa-form.utils';
 
 export type OptionsToDelete = "categoriaPagamento"
-type tipoPagamento = "Recorrente" | "Parcelado" | "À Vista"
-type Frequencia = "Mensal" | "Semanal" | "Outro"
-type UnidadeFrequencia = "Dias" | "Semanas" | "Meses" | "Anos"
 
 const TODAY = new Date()
 const FIRST_DAY_OF_THE_MONTH = new Date(TODAY.getFullYear(), TODAY.getMonth(), 1)
@@ -46,7 +44,7 @@ export class DespesaFormComponent implements OnInit {
   @Output() despesaCreated = new EventEmitter<any>()
 
   httpService = inject(HttpService)
-  despesaFormService = inject(DespesaFormService)
+  despesaFormService = inject(DespesaService)
   fb = inject(FormBuilder)
 
   maxDate = ""
@@ -71,18 +69,10 @@ export class DespesaFormComponent implements OnInit {
   tipoPagamentoOptions: tipoPagamento[] = ["Recorrente", "Parcelado", "À Vista"]
   tipoPagamentoSelecionado = signal<tipoPagamento | "">("")
 
-  frequenciasOptions: Frequencia[] = ["Mensal", "Semanal", "Outro"]
+  frequenciasOptions = frequenciasOptions
   frequenciaSelecionada = signal<Frequencia | "">("")
 
-  daysOptions = [
-    { "label": "Segunda-feira", "value": "0" },
-    { "label": "Terça-feira", "value": "1" },
-    { "label": "Quarta-feira", "value": "2" },
-    { "label": "Quinta-feira", "value": "3" },
-    { "label": "Sexta-feira", "value": "4" },
-    { "label": "Sábado", "value": "5" },
-    { "label": "Domingo", "value": "6" },
-  ]
+  daysOptions = daysOptions
 
 
   typeOfOptionToDelete?: OptionsToDelete
@@ -90,15 +80,9 @@ export class DespesaFormComponent implements OnInit {
 
   tiposPagamentos = signal<TipoPagamento[]>([])
 
-  categoriasPagamentosDisponiveis = computed(() => {
-    return [...(
-      (
-        this.tiposPagamentos().find(el => el.descricao === this.tipoPagamentoSelecionado())
-        || { categoriasPagamentos: [] }
-      )
-        .categoriasPagamentos
-    )]
-  })
+  categoriasPagamentosDisponiveis = computed(() =>
+    this.despesaFormService.getCategoriasPagamentosByTipoPagamento(this.tipoPagamentoSelecionado())()
+  )
 
   ngOnInit(): void {
     this.despesaFormService.getTipoPagamento().subscribe((response) => {
@@ -134,49 +118,20 @@ export class DespesaFormComponent implements OnInit {
   }
 
   updateMinDate() {
-    let currentDate = new Date()
-
-    const dateHandlers: { [key in UnidadeFrequencia]: any } = {
-      "Dias": (dias: number) => currentDate.setDate(currentDate.getDate() - dias),
-      "Semanas": (semanas: number) => currentDate.setDate(currentDate.getDate() - (7 * semanas)),
-      "Meses": (meses: number) => currentDate.setMonth(currentDate.getMonth() - meses),
-      "Anos": (anos: number) => currentDate.setFullYear(currentDate.getFullYear() - anos),
-    }
-
     let detalhesFrequencia = this.despesaForm.get("detalhesFrequencia")!.value as { quantidade: number, unidade: string }
 
     const quantidade = detalhesFrequencia?.quantidade
-    const unidade = detalhesFrequencia?.unidade
+    const unidade = detalhesFrequencia?.unidade as UnidadeFrequencia
 
-    if (!quantidade || !unidade) {
-      this.minDate = ""
-      return
-    }
-
-    dateHandlers[unidade as UnidadeFrequencia](Number(quantidade))
-    this.minDate = (
-      FIRST_DAY_OF_THE_MONTH < currentDate ? FIRST_DAY_OF_THE_MONTH : currentDate
-    )
-      .toLocaleDateString('en-ca')
+    this.minDate = getMinDate(quantidade, unidade)
   }
 
   /* NEW OPTIONS EVENT HANDLERS */
   handleCategoriaPagamentoCreated(event: {
-    tipoPagamentoUpdated: TipoPagamento,
     tipoPagamento: string,
     categoriaPagamento: string
   }) {
-    const { tipoPagamentoUpdated, tipoPagamento, categoriaPagamento } = event
-
-    this.tiposPagamentos.update(
-      tiposPagamentos => {
-        let tipoPagamentoUpdatedIndex = tiposPagamentos.findIndex(el => el.tipoPagamentoId === tipoPagamentoUpdated.tipoPagamentoId)
-
-        tiposPagamentos[tipoPagamentoUpdatedIndex] = tipoPagamentoUpdated
-
-        return [...tiposPagamentos]
-      }
-    )
+    const { tipoPagamento, categoriaPagamento } = event
 
     if (this.tipoPagamentoSelecionado() !== tipoPagamento) {
       this.handleTipoPagamentoValueChange(tipoPagamento as tipoPagamento)
@@ -216,31 +171,14 @@ export class DespesaFormComponent implements OnInit {
 
   deleteCategoriaPagamento() {
     const OPTION_TO_DELETE = this.optionToDelete().value
-    const userId = "1"
-
-    const tipoPagamentoIndex = this.tiposPagamentos().findIndex(el => el.descricao === this.tipoPagamentoSelecionado())
-
-    if (tipoPagamentoIndex === -1) {
-      alert(`${this.tipoPagamentoSelecionado()} NOT FOUND ON this.tiposPagamentos()`)
-      return
-    }
-
-    let newCategoriasPagamentosValue = [...this.tiposPagamentos()[tipoPagamentoIndex].categoriasPagamentos]
-    newCategoriasPagamentosValue.splice(newCategoriasPagamentosValue.findIndex(el => el === OPTION_TO_DELETE), 1)
-
-    this.httpService
-      .put("tipos_pagamentos", `${userId}/${this.tiposPagamentos()[tipoPagamentoIndex].tipoPagamentoId}`, { categoriasPagamentos: newCategoriasPagamentosValue })
-      .subscribe(() => {
-        this.tiposPagamentos
-          .update(tiposPagamentos => {
-            if (this.despesaForm.getRawValue()["categoriaPagamento"] === OPTION_TO_DELETE) {
-              this.despesaForm.patchValue({ "categoriaPagamento": "" })
-            }
-
-            tiposPagamentos[tipoPagamentoIndex]["categoriasPagamentos"] = newCategoriasPagamentosValue
-            return [...tiposPagamentos]
-          })
-      })
+    this.despesaFormService.deleteCategoriaPagamento(this.tipoPagamentoSelecionado(), OPTION_TO_DELETE)
+      .subscribe(
+        () => {
+          if (this.despesaForm.getRawValue()["categoriaPagamento"] === OPTION_TO_DELETE) {
+            this.despesaForm.patchValue({ "categoriaPagamento": "" })
+          }
+        }
+      )
   }
 
 
@@ -290,7 +228,6 @@ export class DespesaFormComponent implements OnInit {
     this.tipoPagamentoSelecionado.set(newValue)
     this.handleFrequenciaValueChange("")
 
-
     this.minDate = (newValue === 'À Vista') ? FIRST_DAY_OF_THE_MONTH.toLocaleDateString('en-ca') : ''
   }
 
@@ -325,39 +262,7 @@ export class DespesaFormComponent implements OnInit {
   }
 
   protected updateDetalhesFrequenciaForm = effect(() => {
-    const removeControls = (fg: FormGroup) => {
-      Object.keys(fg.controls).forEach(controlKey => fg.removeControl(controlKey))
-    }
-
-    const addControls = (fg: FormGroup, newControls: { [key: string]: any }) => {
-      Object.entries(newControls).forEach(([controlName, initialValue]) => {
-        fg.addControl(controlName, new FormControl(initialValue, [Validators.required]))
-      })
-    }
-
-    let detalhesFrequenciaFormFields: {
-      [key in Frequencia | ""]: any
-    } = {
-      'Mensal': {
-        "diaPagamento": ""
-      },
-      'Semanal': {
-        "diaSemana": ""
-      },
-      'Outro': {
-        "unidade": "",
-        "quantidade": ""
-      },
-      "": {}
-    }
-
-    let detalhesFrequenciasFG = (this.despesaForm.get("detalhesFrequencia") as FormGroup)
-
-    removeControls(detalhesFrequenciasFG)
-    addControls(
-      detalhesFrequenciasFG,
-      detalhesFrequenciaFormFields[this.frequenciaSelecionada()]
-    )
+    setDetalhesFrequenciaFields(this.despesaForm, this.frequenciaSelecionada())
 
     if (this.frequenciaSelecionada() === "Outro") {
       this.despesaForm.get("ultimoPagamento")?.setValidators(Validators.required)

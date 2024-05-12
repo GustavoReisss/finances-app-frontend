@@ -3,8 +3,8 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ButtonDirective } from '../../../../../../../../shared/directives/button/button.directive';
 import { SelectComponent } from '../../../../../../../../shared/components/select/select.component';
 import { InputDirective } from '../../../../../../../../shared/directives/input/input.directive';
-import { HttpService } from '../../../../../../../../shared/services/http.service';
 import { TipoPagamento } from '../../../../../../../../shared/interfaces/tipo-pagamento.interface';
+import { DespesaService } from '../../../../services/despesa-service/despesa-form.service';
 
 @Component({
   selector: 'app-add-categoria-pagamento',
@@ -15,9 +15,9 @@ import { TipoPagamento } from '../../../../../../../../shared/interfaces/tipo-pa
 })
 export class AddCategoriaPagamentoComponent {
   fb = inject(FormBuilder)
-  httpService = inject(HttpService)
+  despesaService = inject(DespesaService)
 
-  @Output() categoriaPagamentoCreated = new EventEmitter<{ tipoPagamentoUpdated: TipoPagamento, tipoPagamento: string, categoriaPagamento: string }>()
+  @Output() categoriaPagamentoCreated = new EventEmitter<{ tipoPagamento: string, categoriaPagamento: string }>()
 
   tiposPagamentos = input<TipoPagamento[]>([])
   tipoPagamentoSelecionado = input('')
@@ -42,39 +42,20 @@ export class AddCategoriaPagamentoComponent {
 
     const formValue = this.categoriaPagamentoForm.value as { [key: string]: string }
 
+    this.despesaService.createCategoria(
+      formValue["tipoPagamento"],
+      formValue["descricao"]
+    ).subscribe(() => {
+      let descricaoControl = this.categoriaPagamentoForm.get('descricao')
 
-    const tipoPagamentoSelecionado = this.tiposPagamentos().find(el => el.descricao === formValue["tipoPagamento"])
+      descricaoControl?.setValue("")
+      descricaoControl?.markAsPristine()
 
-    if (!tipoPagamentoSelecionado) {
-      alert(`tipoPagamento ${formValue["tipoPagamento"]} NOT FOUND IN this.tiposPagamentos()`)
-      return
-    }
-
-    let categoriasPagamentos: string[] = tipoPagamentoSelecionado.categoriasPagamentos
-
-    categoriasPagamentos.push(formValue["descricao"])
-
-    const body = {
-      "categoriasPagamentos": categoriasPagamentos
-    }
-
-    this.httpService.put<TipoPagamento[]>(
-      'tipos_pagamentos',
-      tipoPagamentoSelecionado.tipoPagamentoId,
-      body
-    )
-      .subscribe(response => {
-        let descricaoControl = this.categoriaPagamentoForm.get('descricao')
-
-        descricaoControl?.setValue("")
-        descricaoControl?.markAsPristine()
-
-        this.categoriaPagamentoCreated.emit({
-          tipoPagamentoUpdated: response[0],
-          tipoPagamento: formValue["tipoPagamento"],
-          categoriaPagamento: formValue["descricao"]
-        })
-
+      this.categoriaPagamentoCreated.emit({
+        tipoPagamento: formValue["tipoPagamento"],
+        categoriaPagamento: formValue["descricao"]
       })
+
+    })
   }
 }

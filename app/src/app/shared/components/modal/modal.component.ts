@@ -40,7 +40,7 @@ const POSITION_STYLE: PositionStyle = {
     ])
   ],
   host: {
-    class: 'fixed'
+    class: 'fixed z-50'
   }
 })
 export class ModalComponent {

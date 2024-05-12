@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild, computed, forwardRef, input, signal } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild, computed, effect, forwardRef, input, signal } from '@angular/core';
 import { OverlayModule, ScrollStrategy, ScrollStrategyOptions, ViewportRuler } from '@angular/cdk/overlay'
 import { Subject, takeUntil } from 'rxjs';
 import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
@@ -75,9 +75,6 @@ export class ComboboxComponent implements OnInit, OnDestroy, ControlValueAccesso
 
   selectedOption = signal<ComboboxOption | undefined>(undefined)
 
-  teste(a: any) {
-    console.table(a)
-  }
   // Controle do Overlay
   @ViewChild("trigger") trigger!: ElementRef
   protected readonly _destroy = new Subject<void>();

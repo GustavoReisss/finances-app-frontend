@@ -156,7 +156,7 @@ export class DespesasChartComponent implements OnInit {
               <ul> ${item.despesas.map((item: any) => `
                 <li class="flex gap-2 justify-between">
                   <span class="block max-w-[30ch] truncate">
-                    ${item.label}:
+                    ${item.label}
                   </span>
                   
                   <span>

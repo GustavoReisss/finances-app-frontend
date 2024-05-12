@@ -1,57 +1,153 @@
-<div class="container">
-  <app-despesa-form
-    (despesaCreated)="handleDespesaCreated($event)"
-  ></app-despesa-form>
-</div>
+<app-modal
+  class="rounded-md"
+  [open]="modalCadastroDespesa()"
+  (close)="modalCadastroDespesa.set(false)"
+>
+  <div class="container w-[90vw] max-w-[80rem] h-[90vh] py-8 px-6">
+    <app-despesa-form
+      (despesaCreated)="handleDespesaCreated($event)"
+    ></app-despesa-form>
+  </div>
+</app-modal>
 
 <div class="container pb-4">
-  <h1 class="my-5 text-2xl font-bold">Despesas</h1>
+  <h1 class="text-2xl font-bold">Despesas</h1>
 
-  <div class="relative overflow-auto">
+  <h2>Aqui estão suas Despesas cadastradas:</h2>
+
+  <button appButton (click)="modalCadastroDespesa.set(true)">
+    Cadastrar nova Despesa
+  </button>
+
+  <div class="flex flex-wrap justify-end gap-2 pt-2 pb-6">
+    <div
+      class="flex-grow py-1 text-center rounded-md shadow-lg max-w-48 bg-background-400"
+    >
+      <h2 class="text-lg font-bold">Despesas</h2>
+      <p class="font-bold">{{ despesasInfo().quantidade }}</p>
+    </div>
+
+    <div
+      class="flex-grow py-1 text-center rounded-md shadow-lg max-w-48 bg-background-400"
+    >
+      <h2 class="text-lg font-bold">Valor Total</h2>
+      <p class="font-bold">
+        {{ despesasInfo().valorTotal | currency : "BRL" }}
+      </p>
+    </div>
+  </div>
+
+  <app-tabs
+    class="lg:w-max"
+    [tabs]="tabsTipoPagamentos"
+    [ngModel]="tabSelecionada()"
+    (ngModelChange)="tabSelecionada.set($event)"
+  ></app-tabs>
+
+  <div class="flex justify-end gap-2 mt-3">
+    <div
+      class="flex items-center rounded-md shadow-xl cursor-pointer ps-3 bg-background-300/60 text-secondary-500"
+      (click)="setOrder('descricao')"
+      [class.opacity-80]="orderBy() !== 'descricao'"
+    >
+      <span>Nome</span>
+      <span
+        class="transition-all min-w-3 material-symbols-outlined"
+        [class.rotate-180]="orderDirection() === -1"
+      >
+        @if (orderBy() === "descricao") { arrow_drop_up}
+      </span>
+    </div>
+
+    <div
+      class="flex items-center rounded-md cursor-pointer ps-3 bg-background-300/60 text-secondary-500"
+      (click)="setOrder('valor')"
+      [class.opacity-80]="orderBy() !== 'valor'"
+    >
+      <span>Valor</span>
+
+      <span
+        class="transition-all min-w-3 material-symbols-outlined"
+        [class.rotate-180]="orderDirection() === -1"
+      >
+        @if (orderBy() === "valor") { arrow_drop_up }
+      </span>
+    </div>
+  </div>
+
+  <div class="relative grid gap-4 mt-1 overflow-auto min-h-60">
     <app-skeleton-loader [loading]="fetchingDespesas()"></app-skeleton-loader>
-    <table class="w-full table-primary">
-      <thead>
-        <tr>
-          <th>Descrição</th>
-          <th>Valor</th>
-          <th>Tipo Pagamento</th>
-          <th>Categoria Pagamento</th>
-          <th>Quantidade Parcelas</th>
-          <th>Parcela Atual</th>
-          <!-- <th>Frequencia Pagamento</th> -->
-          <th>Delete</th>
-        </tr>
-      </thead>
-      <tbody class="whitespace-nowrap">
-        @for(despesa of despesas(); track $index) {
-        <tr>
-          <td>
-            <input
-              type="text"
-              class="bg-[transparent] focus-visible:outline-none focus:drop-shadow-sm focus:ring-primary-500"
-              [value]="despesa.descricao"
-              #inputDescricao
-            />
-          </td>
-          <td>{{ despesa.valor | currency : "BRL" }}</td>
-          <td>{{ despesa.tipoPagamento }}</td>
-          <td>{{ despesa.categoriaPagamento }}</td>
-          <td>{{ despesa?.quantidadeParcelas }}</td>
-          <td>{{ despesa?.parcelaAtual }}</td>
-          <!-- <td>{{ despesa?.detalhesFrequencia }}</td> -->
-          <td class="inline-flex justify-center w-full">
-            <button
-              (click)="deleteDespesa(despesa)"
-              class="w-6 h-6 transition rounded-full hover:bg-danger-500/20 hover:outline hover:outline-danger-500/30"
-            >
-              <span class="material-symbols-outlined text-danger-500"
-                >delete_forever</span
-              >
-            </button>
-          </td>
-        </tr>
-        }
-      </tbody>
-    </table>
+
+    @for(despesa of despesasFiltradas(); track $index) {
+    <div class="grid w-full gap-1 px-4 py-2 rounded-md h-max bg-background-600">
+      <header class="relative pb-1 border-b border-background-400">
+        <h1>{{ despesa.descricao }}</h1>
+        <h2 class="text-lg font-bold">
+          {{ despesa.valor | currency : "BRL" }}
+        </h2>
+
+        <button
+          class="absolute top-0 h-6 px-1 transition-all rounded-md right-1 text-danger-500 hover:bg-danger-500/10"
+          (click)="deleteDespesa(despesa)"
+        >
+          <span class="material-symbols-outlined">delete</span>
+        </button>
+      </header>
+
+      <footer class="flex items-center justify-between">
+        <div class="flex flex-wrap gap-1 py-1">
+          @for (tag of despesa.tags; track $index) {
+          <span
+            class="px-2 truncate rounded-md bg-background-400 w-max max-w-56"
+            [title]="tag"
+          >
+            {{ tag }}
+          </span>
+          }
+        </div>
+
+        <div>
+          <button
+            class="flex items-center gap-1 px-2 transition-all rounded-md text-primary-400 hover:bg-primary-400/10"
+            (click)="editDespesa(despesa)"
+          >
+            Editar
+            <span class="material-symbols-outlined">box_edit</span>
+          </button>
+        </div>
+      </footer>
+    </div>
+    } @empty { @if(!fetchingDespesas()) { @if (tabSelecionada() ===
+    tabsTipoPagamentos[0]) {
+    <div>
+      <h2>Você não possui nenhuma despesa cadastrada</h2>
+    </div>
+    } @else {
+    <div>
+      <h2>Nenhuma despesa do tipo {{ tabSelecionada() }} cadastrada</h2>
+    </div>
+    } } }
   </div>
 </div>
+
+<app-modal
+  class="rounded-md"
+  [open]="modalDeleteDespesa()"
+  (close)="modalDeleteDespesa.set(false)"
+>
+  <app-delete-despesa-alert
+    [despesa]="despesaToDelete()"
+    (optionDeleted)="handleDespesaDeleted()"
+  ></app-delete-despesa-alert>
+</app-modal>
+
+<app-modal
+  class="w-11/12 max-w-3xl overflow-auto rounded-md max-h-[90vh]"
+  [open]="modalEditDespesa()"
+  (close)="modalEditDespesa.set(false)"
+>
+  <app-edit-despesa
+    [despesa]="despesaToEdit()"
+    (despesaUpdated)="despesaUpdatedHandler($event)"
+  ></app-edit-despesa>
+</app-modal>

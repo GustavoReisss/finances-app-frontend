@@ -18,7 +18,10 @@ export interface TabOption {
       multi: true,
       useExisting: TabsComponent
     }
-  ]
+  ],
+  host: {
+    "class": "p-[6px] bg-background-600 rounded-md flex gap-1 overflow-auto scrollbar scrollbar-track-background-600 scrollbar-thumb-background-300"
+  }
 })
 export class TabsComponent implements ControlValueAccessor {
   @Output() tabChange = new EventEmitter<any>()
@@ -27,7 +30,7 @@ export class TabsComponent implements ControlValueAccessor {
   @Input() labelKey: null | string = null
   @Input() valueKey: null | string = null
 
-  _tabs = input<any[]>([{ "label": "Tab 1", "value": "1" }, { "label": "Tab 2", "value": "2" }], { alias: 'tabs' })
+  _tabs = input<any[]>(["Tab 1", "Tab 2"], { alias: 'tabs' })
 
   protected tabs = computed<TabOption[]>(() => this._tabs().map(option => {
     return {
@@ -56,7 +59,10 @@ export class TabsComponent implements ControlValueAccessor {
 
   setCurrentTab(tab: TabOption) {
     if (tab.value === this.selectedTab()) return
+
+
     this.selectedTab.set(tab.value)
+    this.onChange(tab.value)
     this.tabChange.emit(tab.value)
   }
 }
