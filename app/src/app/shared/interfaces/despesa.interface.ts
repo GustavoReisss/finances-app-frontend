@@ -16,4 +16,5 @@ export interface Despesa {
         unidade?: string
     }
     ultimoPagamento?: string
+    dataProximoPagamento?: string
 }

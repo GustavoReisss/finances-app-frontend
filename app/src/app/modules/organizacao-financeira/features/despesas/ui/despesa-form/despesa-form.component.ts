@@ -51,13 +51,13 @@ export class DespesaFormComponent implements OnInit {
   minDate = ""
 
   despesaForm = this.fb.group({
-    "despesaId": crypto.randomUUID(),
     "tipoPagamento": ["", [Validators.required]],
     "categoriaPagamento": [{ value: "", disabled: true }, [Validators.required]],
     "descricao": ["", [Validators.required]],
     "valor": ["", [Validators.required]],
     "ultimoPagamento": "",
-    "detalhesFrequencia": this.fb.group({})
+    "detalhesFrequencia": this.fb.group({}),
+    "dataProximoPagamento": ""
   })
 
   modalStates = signal<any>({
@@ -242,7 +242,8 @@ export class DespesaFormComponent implements OnInit {
     if (frequenciaControl) (frequenciaControl as AbstractControl<string>).setValue(newValue)
 
     this.despesaForm.patchValue({
-      "ultimoPagamento": ""
+      "ultimoPagamento": "",
+      "dataProximoPagamento": ""
     })
   }
 
@@ -296,8 +297,6 @@ export class DespesaFormComponent implements OnInit {
 
     this.despesaFormService.createDespesa(this.despesaForm.value as Despesa)
       .subscribe(res => {
-        this.despesaForm.patchValue({ "despesaId": crypto.randomUUID() })
-
         this.despesaCreated.emit(res)
       })
   }

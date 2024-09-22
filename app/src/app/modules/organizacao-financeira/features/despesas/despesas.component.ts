@@ -113,11 +113,10 @@ export class DespesasComponent implements OnInit {
     let extraTags = []
 
     if (despesa.tipoPagamento == 'À Vista') {
-      const dataPagamento = new Date(despesa.ultimoPagamento!)
+      const dataPagamento = new Date(despesa.dataProximoPagamento!)
       dataPagamento.setHours(dataPagamento.getHours() + 3)
 
       extraTags.push(`Pagamento dia ${dataPagamento.toLocaleDateString('pt-br')}`)
-
     }
     else {
       switch (despesa.frequencia) {
@@ -149,6 +148,12 @@ export class DespesasComponent implements OnInit {
       }
     }
 
+    if (despesa.dataProximoPagamento && despesa.tipoPagamento !== 'À Vista') {
+      const dataPagamento = new Date(despesa.dataProximoPagamento!)
+      dataPagamento.setHours(dataPagamento.getHours() + 3)
+      extraTags.push(`Próximo pagamento em ${dataPagamento.toLocaleDateString('pt-br')}`)
+    }
+
     return [
       despesa.tipoPagamento,
       despesa.categoriaPagamento,
@@ -171,6 +176,7 @@ export class DespesasComponent implements OnInit {
       despesas.push({ ...despesa[0], tags: this.createTags(despesa[0]) })
       return [...despesas]
     })
+    this.modalCadastroDespesa.set(false)
   }
 
   handleDespesaDeleted() {

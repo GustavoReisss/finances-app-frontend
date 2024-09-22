@@ -1,7 +1,7 @@
 
 const PROXY_CONFIG = [
     {
-        "enabled": true,
+        "enabled": false,
         "context": ["/api_proxy/despesas_futuras"],
         "target": "http://127.0.0.1:5001",
         "secure": false,
@@ -13,7 +13,20 @@ const PROXY_CONFIG = [
     },
     {
         "enabled": true,
-        "context": ["/api_proxy/despesas"],
+        "context": ["/api_proxy/despesas_futuras"],
+        "target": "https://d28jtj2wwws6wz.cloudfront.net/api",
+        "secure": true,
+        "changeOrigin": true,
+        "logLevel": "debug",
+        "pathRewrite": {
+            "^/api_proxy": ""
+        }
+    },
+    {
+        "enabled": true,
+        "context": [
+            "/api_proxy/despesas"
+        ],
         "target": "http://127.0.0.1:5000",
         "secure": false,
         "changeOrigin": true,

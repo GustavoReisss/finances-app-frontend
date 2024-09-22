@@ -94,11 +94,11 @@
         </button>
       </header>
 
-      <footer class="flex items-center justify-between">
+      <footer class="flex items-center justify-between gap-5">
         <div class="flex flex-wrap gap-1 py-1">
           @for (tag of despesa.tags; track $index) {
           <span
-            class="px-2 truncate rounded-md bg-background-400 w-max max-w-56"
+            class="px-2 truncate rounded-md bg-background-400 w-max max-w-80"
             [title]="tag"
           >
             {{ tag }}
