@@ -19,6 +19,10 @@ export const routes: Routes = [
                 loadComponent: () => import('./modules/acoes/acoes.component').then(c => c.AcoesComponent)
             },
             {
+                path: 'steps',
+                loadChildren: () => import('./modules/cadastrar-steps/cadastrar-steps.routes').then(m => m.routes)
+            },
+            {
                 path: '',
                 redirectTo: 'organizacao-financeira',
                 pathMatch: 'full'

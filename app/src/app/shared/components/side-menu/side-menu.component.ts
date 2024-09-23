@@ -21,6 +21,11 @@ export class SideMenuComponent {
       "route": "/acoes",
       "icon": "monitoring",
       "label": "Ações"
+    },
+    {
+      "route": "/steps",
+      "icon": "rebase",
+      "label": "Steps"
     }
   ])
 }

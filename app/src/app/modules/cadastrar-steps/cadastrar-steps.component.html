@@ -1,0 +1,49 @@
+<h1 class="text-3xl font-bold">Criar Execução</h1>
+
+<div [formGroup]="execution">
+  <h2 class="py-3 text-xl font-bold">Informações da Execução:</h2>
+  <label>
+    Incident:
+    <input type="text" formControlName="incident" appInput />
+  </label>
+
+  <div class="flex justify-between mt-8">
+    <h2 class="text-xl font-bold">Steps</h2>
+    <button appButton (click)="addStep()">Adicionar Step</button>
+  </div>
+
+  <ng-container formArrayName="steps">
+    @for(step of steps.controls; track $index) {
+
+    <div [formGroup]="step" class="p-4 mb-4 rounded-md bg-background-400">
+      <h1 class="mb-2 text-lg font-extrabold text-secondary-400">
+        Step {{ $index + 1 }}
+      </h1>
+
+      <div class="flex flex-wrap gap-4">
+        <label class="flex-grow max-w-xl">
+          Action
+          <input type="text" formControlName="action" appInput />
+        </label>
+
+        <label class="flex-grow max-w-xl">
+          Context
+          <input type="text" formControlName="context" appInput />
+        </label>
+      </div>
+    </div>
+
+    } @empty {
+
+    <p class="mt-2 font-bold text-text-500/80">
+      Adicione um Step a sua Execução!
+    </p>
+
+    }
+  </ng-container>
+</div>
+
+<h2 class="mt-5 mb-1 text-xl font-bold">Execution:</h2>
+<pre class="p-2 font-bold rounded-md shadow-xl bg-background-400"
+  >{{ execution.value | json }}
+</pre>
