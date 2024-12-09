@@ -1,49 +1,112 @@
-<h1 class="text-3xl font-bold">Criar Execução</h1>
-
-<div [formGroup]="execution">
-  <h2 class="py-3 text-xl font-bold">Informações da Execução:</h2>
-  <label>
-    Incident:
-    <input type="text" formControlName="incident" appInput />
-  </label>
-
-  <div class="flex justify-between mt-8">
-    <h2 class="text-xl font-bold">Steps</h2>
-    <button appButton (click)="addStep()">Adicionar Step</button>
+<div>
+  <div class="flex justify-end">
+    <button (click)="modalCadastro.set(true)" appButton class="w-60">
+      Cadastrar Nova Rota
+    </button>
   </div>
 
-  <ng-container formArrayName="steps">
-    @for(step of steps.controls; track $index) {
-
-    <div [formGroup]="step" class="p-4 mb-4 rounded-md bg-background-400">
-      <h1 class="mb-2 text-lg font-extrabold text-secondary-400">
-        Step {{ $index + 1 }}
-      </h1>
-
-      <div class="flex flex-wrap gap-4">
-        <label class="flex-grow max-w-xl">
-          Action
-          <input type="text" formControlName="action" appInput />
-        </label>
-
-        <label class="flex-grow max-w-xl">
-          Context
-          <input type="text" formControlName="context" appInput />
+  <form [formGroup]="filtersForm" (ngSubmit)="setPaths()">
+    <div class="grid grid-cols-7 gap-4">
+      <div class="col-span-2">
+        <label>
+          Comunidade
+          <input type="text" formControlName="comunidade" appInput />
         </label>
       </div>
+
+      <div class="col-span-2">
+        <label>
+          Release Train
+          <input type="text" formControlName="releaseTrain" appInput />
+        </label>
+      </div>
+
+      <div class="col-span-2">
+        <label>
+          Squad
+          <input type="text" formControlName="squad" appInput />
+        </label>
+      </div>
+
+      <div class="flex items-end">
+        <button appButton type="submit" class="w-full">Buscar</button>
+      </div>
     </div>
+  </form>
 
-    } @empty {
+  <div class="mt-8">
+    <h2 class="mb-2 text-xl font-bold text-secondary-400">
+      Rotas Encontradas:
+    </h2>
 
-    <p class="mt-2 font-bold text-text-500/80">
-      Adicione um Step a sua Execução!
-    </p>
+    <table class="table-primary">
+      <thead>
+        <tr>
+          <th>Path</th>
+          <th>Comunidade</th>
+          <th>Release Train</th>
+          <th>Squad</th>
+        </tr>
+      </thead>
 
-    }
-  </ng-container>
+      <tbody>
+        @for(path of paths(); track $index) {
+        <tr>
+          <td>{{ path.pathId }}</td>
+          <td>{{ path.comunidade }}</td>
+          <td>{{ path.releaseTrain }}</td>
+          <td>{{ path.squad }}</td>
+        </tr>
+        } @empty {
+        <tr>
+          <td colspan="4" class="font-bold text-center text-text-700">
+            Nenhuma rota encontrada.
+          </td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
 </div>
 
-<h2 class="mt-5 mb-1 text-xl font-bold">Execution:</h2>
-<pre class="p-2 font-bold rounded-md shadow-xl bg-background-400"
-  >{{ execution.value | json }}
-</pre>
+<app-modal [open]="modalCadastro()" class="p-6 rounded-md">
+  <h1 class="mb-4 text-xl font-extrabold text-secondary-500">
+    Cadastrar Nova Rota
+  </h1>
+
+  <form [formGroup]="cadastroRotaForm" (ngSubmit)="insertPath()">
+    <div class="grid gap-4">
+      <div class="">
+        <label>
+          PathId
+          <input type="text" formControlName="pathId" appInput />
+        </label>
+      </div>
+
+      <div class="">
+        <label>
+          Comunidade
+          <input type="text" formControlName="comunidade" appInput />
+        </label>
+      </div>
+
+      <div class="">
+        <label>
+          Release Train
+          <input type="text" formControlName="releaseTrain" appInput />
+        </label>
+      </div>
+
+      <div class="">
+        <label>
+          Squad
+          <input type="text" formControlName="squad" appInput />
+        </label>
+      </div>
+
+      <div class="flex items-end">
+        <button appButton type="submit" class="w-full">Buscar</button>
+      </div>
+    </div>
+  </form>
+</app-modal>

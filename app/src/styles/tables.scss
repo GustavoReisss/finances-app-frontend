@@ -1,6 +1,7 @@
 .__table {
     width: 100%;
     --table-border-color: unset;
+    --table-header-color: unset;
 
     tr {
         border-bottom: 1px solid hsl(var(--table-border-color));
@@ -13,17 +14,21 @@
     }
 
     th {
-        font-weight: 600;
+        font-weight: 800;
+        font-size: 1.1rem;
         text-align: start;
+        color: hsl(var(--table-header-color));
     }
 }
 
 .table-primary {
     @extend .__table;
     --table-border-color: var(--primary-700);
+    --table-header-color: var(--primary-500);
 }
 
 .table-secondary {
     @extend .__table;
     --table-border-color: var(--secondary-700);
+    --table-header-color: var(--secondary-400);
 }

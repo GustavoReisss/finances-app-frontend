@@ -1,6 +1,17 @@
 
 const PROXY_CONFIG = [
     {
+        "enabled": true,
+        "context": ["/api_proxy/rotas"],
+        "target": "http://127.0.0.1:5000",
+        "secure": false,
+        "changeOrigin": true,
+        "logLevel": "debug",
+        "pathRewrite": {
+            "^/api_proxy": ""
+        }
+    },
+    {
         "enabled": false,
         "context": ["/api_proxy/despesas_futuras"],
         "target": "http://127.0.0.1:5001",
