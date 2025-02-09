@@ -1,6 +1,6 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { TipoPagamento } from '../../../../../../shared/interfaces/tipo-pagamento.interface';
-import { HttpService } from '../../../../../../shared/services/http.service';
+import { HttpService } from '../../../../../../shared/services/http/http.service';
 import { Despesa } from '../../../../../../shared/interfaces/despesa.interface';
 import { tap, throwError } from 'rxjs';
 
@@ -45,7 +45,7 @@ export class DespesaService {
   }
 
   updateDespesa(valueToUpdate: Partial<Despesa>, despesaId: string) {
-    return this.httpService.put<Despesa[]>("despesas", despesaId, valueToUpdate)
+    return this.httpService.put<Despesa>("despesas", despesaId, valueToUpdate)
   }
 
   deleteCategoriaPagamento(tipoPagamento: string, categoria: string) {

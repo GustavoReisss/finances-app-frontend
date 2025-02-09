@@ -1,0 +1,28 @@
+@if(show()) {
+<!-- Update chart size -->
+
+<div class="relative">
+  <!-- @if (loading()) {
+  <div
+    class="absolute z-10 grid w-full h-full place-items-center bg-background-variant-dark-1/60"
+  >
+    <span class="scale-150">
+      <span class="material-symbols-outlined animate-spin"> refresh </span>
+    </span>
+  </div>
+  } -->
+  <app-skeleton-loader [loading]="loading()"></app-skeleton-loader>
+  <apx-chart
+    [series]="series()"
+    [annotations]="chartOptions.annotations"
+    [fill]="chartOptions.fill"
+    [xaxis]="chartOptions.xaxis"
+    [chart]="chartOptions.chart"
+    [tooltip]="chartOptions.tooltip"
+    [grid]="chartOptions.grid"
+    [responsive]="chartOptions.responsive"
+    [dataLabels]="chartOptions.dataLabels"
+  >
+  </apx-chart>
+</div>
+}

@@ -1,30 +1,34 @@
-<div
-  class="w-full h-full max-h-full bg-background-500 grid overflow-auto {{
-    portrait() ? 'grid-rows-[1fr_auto]' : 'grid-cols-[auto_1fr]'
-  }}"
->
-  @if(!portrait()) {
-  <nav>
-    <app-side-menu></app-side-menu>
-  </nav>
-  }
+@if(portrait()) {
+<!-- Mobile  -->
 
-  <main
-    id="main-content"
-    cdk-scrollable
-    class="w-full h-full max-h-full overflow-auto"
-  >
-    <div
-      class="h-full
-    {{ portrait() ? 'px-4 pt-5' : 'pt-5 px-14' }}"
-    >
+<div
+  class="relative w-full h-full max-h-[100vh] bg-background-base grid grid-rows-[1fr_auto] grid-cols-[1fr]"
+>
+  <main id="main-content" cdk-scrollable class="w-full h-full overflow-auto">
+    <div class="h-full px-4 pt-5">
       <router-outlet></router-outlet>
     </div>
   </main>
 
-  @if(portrait()) {
   <nav>
     <app-horizontal-menu></app-horizontal-menu>
   </nav>
-  }
 </div>
+
+} @else {
+<!-- Desktop  -->
+
+<div
+  class="relative w-full h-full bg-background-base max-h-[100vh] grid grid-cols-[1fr]"
+>
+  <nav class="fixed z-50 h-full shadow-lg">
+    <app-side-menu></app-side-menu>
+  </nav>
+
+  <main cdk-scrollable class="w-full h-[100vh] max-h-[100vh] ps-10">
+    <div class="h-full pt-5 pb-4 overflow-auto px-14" id="main-content">
+      <router-outlet></router-outlet>
+    </div>
+  </main>
+</div>
+}

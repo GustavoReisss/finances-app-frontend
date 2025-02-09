@@ -1,11 +1,9 @@
 <div
-  class="w-[inherit] group-[.ng-dirty.ng-touched.ng-invalid]:*:border-danger-500 group-[.ng-dirty.ng-touched.ng-invalid]:*:text-danger-500"
+  class="w-[inherit] group-[.ng-dirty.ng-touched.ng-invalid]:*:border-feedback-error group-[.ng-dirty.ng-touched.ng-invalid]:*:text-feedback-error"
 >
   <div
     [title]="selectedOption()?.label || placeholder"
-    class="
-    border rounded-md border-{{ color }}-500
-    cursor-pointer flex justify-between items-center pl-4 pr-2"
+    class="flex items-center justify-between pl-4 pr-2 border rounded-md cursor-pointer bg-background-base border-text-body-2/20"
     [class.opacity-70]="disabled"
     (click)="!disabled && toggle()"
     cdkOverlayOrigin
@@ -37,18 +35,16 @@
     (overlayOutsideClick)="isOpen = false"
   >
     <div
-      class="my-1 w-full bg-background-500 rounded-md border border-{{
-        color
-      }}-500 text-lg shadow-xl"
+      class="w-full my-1 text-lg border rounded-md shadow-xl bg-background-base border-text-body-2/20"
     >
       <ul
-        class="px-2 py-2 max-h-40 overflow-y-auto scrollbar scrollbar-track-[transparent] scrollbar-thumb-background-300"
+        class="px-2 py-2 max-h-40 overflow-y-auto scrollbar scrollbar-track-[transparent] scrollbar-thumb-background-variant-light-2"
       >
         @for (option of options(); track option.label) {
         <li
           [title]="option.label"
           (click)="setOption(option)"
-          class="flex items-center gap-1 py-1 pl-1 pr-2 transition duration-300 rounded-md cursor-pointer hover:bg-background-300"
+          class="flex items-center gap-1 py-1 pl-1 pr-2 transition duration-300 rounded-md cursor-pointer hover:bg-background-variant-light-2"
         >
           <span class="w-6 text-2xl material-symbols-outlined">
             @if(selectedOption() === option) { done }

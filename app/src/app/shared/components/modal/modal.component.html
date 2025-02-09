@@ -4,18 +4,22 @@
 
 <div
   id="modal"
-  class="bg-background-400 relative {{ _positionStyle() }} {{
+  class="bg-background-variant-light-1 relative {{ _positionStyle() }} {{
     userClasses()
-  }} overflow-auto"
-  [@modalChangeVisibility]
+  }}"
+  [@modalAnimation]="position()"
 >
   <button
-    class="absolute transition h-7 w-7 top-1 right-1 hover:scale-110"
+    class="fixed transition z-[9999] h-7 w-7 top-1 right-1 hover:scale-110"
     (click)="closeModal()"
   >
     <span class="material-symbols-outlined icon-bold"> close </span>
   </button>
 
-  <ng-content></ng-content>
+  <div
+    class="overflow-auto scrollbar scrollbar-track-background-variant-light-1 scrollbar-thumb-background-base"
+  >
+    <ng-content></ng-content>
+  </div>
 </div>
 }

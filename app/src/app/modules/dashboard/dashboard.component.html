@@ -1,0 +1,81 @@
+<div class="relative w-full h-full">
+  <button appButton (click)="dashboardService.fetchData()" class="mb-2">
+    Recarregar
+  </button>
+
+  <div
+    class="fixed z-50 grid w-12 h-12 transition-transform rounded-full shadow-2xl cursor-pointer right-6 place-items-center bottom-14 bg-secondary-base hover:scale-110"
+    cdkOverlayOrigin
+    #trigger
+    #origin="cdkOverlayOrigin"
+    (click)="openSettings.set(!openSettings())"
+  >
+    <span
+      class="ml-[1px] mt-[3px] text-4xl text-secondary-base-contrast material-symbols-rounded icon-bold"
+      >inbox_customize</span
+    >
+  </div>
+
+  <ng-template
+    cdkConnectedOverlay
+    [cdkConnectedOverlayOrigin]="origin"
+    [cdkConnectedOverlayOpen]="openSettings()"
+    (overlayOutsideClick)="openSettings.set(false)"
+  >
+    <div
+      class="grid gap-2 px-1 py-2 my-3 rounded-md me-3 max-w-48 max-h-60 bg-secondary-variant-1"
+    >
+      @for(widget of widgets(); track $index) {
+      <p
+        class="px-3 py-1 transition-colors rounded-md cursor-pointer text-secondary-base-contrast hover:bg-secondary-base/70"
+        [class.bg-secondary-base]="widget.active"
+        (click)="toggleWidget(widget)"
+      >
+        {{ widget.name }}
+      </p>
+      }
+    </div>
+  </ng-template>
+
+  <app-grid
+    class=""
+    [layout]="layout"
+    [updateLayout]="updateLayout.asObservable()"
+    (layoutUpdated)="layoutUpdated($event)"
+  >
+    @if (widgets()[0].active) {
+    <div
+      class="max-w-full max-h-full"
+      *appGridItem="widgets()[0].id; loading: loading()"
+    >
+      <h1 class="text-2xl font-bold text-center">Despesas do mês</h1>
+      <app-despesas-chart
+        [despesas]="despesas()"
+        [updateChart]="updateChart.asObservable()"
+      ></app-despesas-chart>
+    </div>
+
+    } @if (widgets()[1].active) {
+    <div
+      *appGridItem="widgets()[1].id; loading: loading()"
+      class="relative grid w-full h-full px-2 py-5 rounded-md place-items-center bg-background-variant-light-1"
+    >
+      <h1 class="pb-1 text-center h-min">Custo Mensal</h1>
+      <p class="text-4xl font-extrabold text-center h-min">
+        {{ custoMensal() | currency : "BRL" }}
+      </p>
+    </div>
+    } @if (widgets()[2].active;) {
+
+    <app-ultimas-despesas
+      *appGridItem="widgets()[2].id; loading: loading()"
+    ></app-ultimas-despesas>
+
+    } @if (widgets()[3].active;) {
+
+    <app-proximas-despesas
+      *appGridItem="widgets()[3].id; loading: loading()"
+    ></app-proximas-despesas>
+    }
+  </app-grid>
+</div>

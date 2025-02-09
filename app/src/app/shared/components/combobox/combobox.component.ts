@@ -47,7 +47,7 @@ export class ComboboxComponent implements OnInit, OnDestroy, ControlValueAccesso
   @Output() removeOption = new EventEmitter<ComboboxOption>()
 
   // Inputs
-  @Input() color = 'primary'
+  // @Input() color = 'primary'
   @Input() labelKey: null | string = null
   @Input() valueKey: null | string = null
   placeholder = input("Selecione...")

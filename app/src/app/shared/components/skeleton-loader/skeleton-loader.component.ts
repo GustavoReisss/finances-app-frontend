@@ -4,7 +4,7 @@ const SKELETON_CONTAINER_STYLE = `
 absolute top-0 left-0
 w-full h-full z-10
 grid place-items-center 
-bg-background-600 animate-pulse 
+bg-[rgb(0,0,0,0.10)] animate-pulse 
 `
 
 @Component({

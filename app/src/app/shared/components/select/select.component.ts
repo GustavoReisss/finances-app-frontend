@@ -36,7 +36,6 @@ export class SelectComponent {
   }
 
   // Inputs
-  @Input() color = 'primary'
   @Input() labelKey: null | string = null
   @Input() valueKey: null | string = null
   @Input() placeholder = "Selecione..."

@@ -1,9 +1,9 @@
 
 const PROXY_CONFIG = [
     {
-        "enabled": true,
-        "context": ["/api_proxy/rotas"],
-        "target": "http://127.0.0.1:5000",
+        "enabled": false,
+        "context": ["/api_proxy/despesas_futuras"],
+        "target": "https://d28jtj2wwws6wz.cloudfront.net/api",
         "secure": false,
         "changeOrigin": true,
         "logLevel": "debug",
@@ -23,20 +23,11 @@ const PROXY_CONFIG = [
         }
     },
     {
-        "enabled": true,
-        "context": ["/api_proxy/despesas_futuras"],
-        "target": "https://d28jtj2wwws6wz.cloudfront.net/api",
-        "secure": true,
-        "changeOrigin": true,
-        "logLevel": "debug",
-        "pathRewrite": {
-            "^/api_proxy": ""
-        }
-    },
-    {
-        "enabled": true,
+        "enabled": false,
         "context": [
-            "/api_proxy/despesas"
+            "/api_proxy/despesas",
+            "/api_proxy/extrato_despesas",
+            "/api_proxy/ativos"
         ],
         "target": "http://127.0.0.1:5000",
         "secure": false,

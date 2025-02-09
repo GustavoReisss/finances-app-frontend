@@ -1,0 +1,52 @@
+<div
+  class="relative grid grid-rows-[auto_1fr] h-full max-w-full max-h-full pt-8"
+>
+  <button
+    routerLink="/organizacao-financeira/despesas/historico"
+    appButton
+    class="absolute top-0 right-0 px-0 font-bold"
+    variant="link"
+    color="text-2"
+  >
+    <span class="inline-flex gap-1 hover:border-b">
+      Histórico
+      <span class="inline material-symbols-outlined hover:no-underline">
+        keyboard_tab
+      </span>
+    </span>
+  </button>
+  <p class="mb-2 text-lg font-extrabold">Ultimas Despesas</p>
+  <div
+    class="flex flex-col gap-3 overflow-auto pe-3 scrollbar scrollbar-track-background-base scrollbar-thumb-background-variant-light-1"
+  >
+    @for(despesa of ultimasDespeass(); track $index) {
+    <div class="grid grid-cols-[auto_1fr_auto] gap-3">
+      <div
+        class="grid w-12 h-12 rounded-md shadow-md bg-background-base/50 place-items-center"
+      >
+        <span class="scale-110 material-symbols-outlined text-text-body-1/60">
+          account_balance_wallet
+        </span>
+      </div>
+
+      <div class="flex items-center min-w-full">
+        <p class="text-sm font-light leading-5 line-clamp-2 text-text-body-1">
+          {{ despesa.descricao }}
+        </p>
+      </div>
+
+      <div class="flex flex-col items-end justify-between">
+        <p class="text-xs font-medium text-text-body-2/75">
+          {{ despesa.dataPagamento | date : "dd/MM/yyyy" }}
+        </p>
+
+        <p class="text-sm font-medium text-feedback-error">
+          - {{ despesa.valor | currency : "BRL" }}
+        </p>
+      </div>
+    </div>
+    } @empty {
+    <p>Nenhuma despesa Registrada</p>
+    }
+  </div>
+</div>

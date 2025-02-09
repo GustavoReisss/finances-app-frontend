@@ -1,6 +1,6 @@
 import { Component, EventEmitter, inject, input, Output } from '@angular/core';
 import { Despesa } from '../../../../../../shared/interfaces/despesa.interface';
-import { HttpService } from '../../../../../../shared/services/http.service';
+import { HttpService } from '../../../../../../shared/services/http/http.service';
 import { ButtonDirective } from '../../../../../../shared/directives/button/button.directive';
 
 @Component({

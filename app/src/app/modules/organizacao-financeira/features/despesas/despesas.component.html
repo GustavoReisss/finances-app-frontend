@@ -1,34 +1,36 @@
-<app-modal
-  class="rounded-md"
-  [open]="modalCadastroDespesa()"
-  (close)="modalCadastroDespesa.set(false)"
->
-  <div class="container w-[90vw] max-w-[80rem] h-[90vh] py-8 px-6">
-    <app-despesa-form
-      (despesaCreated)="handleDespesaCreated($event)"
-    ></app-despesa-form>
-  </div>
-</app-modal>
-
 <div class="container pb-4">
+  <div class="flex justify-end">
+    <button
+      appButton
+      routerLink="historico"
+      color="secondary"
+      variant="outline"
+    >
+      Histórico
+    </button>
+  </div>
+
   <h1 class="text-2xl font-bold">Despesas</h1>
 
   <h2>Aqui estão suas Despesas cadastradas:</h2>
 
-  <button appButton (click)="modalCadastroDespesa.set(true)">
-    Cadastrar nova Despesa
-  </button>
+  <app-tabs
+    class="mt-5 lg:w-max"
+    [tabs]="tabsTipoPagamentos"
+    [ngModel]="tabSelecionada()"
+    (ngModelChange)="tabSelecionada.set($event)"
+  ></app-tabs>
 
-  <div class="flex flex-wrap justify-end gap-2 pt-2 pb-6">
+  <div class="flex flex-wrap justify-end gap-2 pt-2 pb-6 mt-2">
     <div
-      class="flex-grow py-1 text-center rounded-md shadow-lg max-w-48 bg-background-400"
+      class="flex-grow py-1 text-center rounded-md shadow-lg max-w-48 bg-background-variant-light-1"
     >
       <h2 class="text-lg font-bold">Despesas</h2>
       <p class="font-bold">{{ despesasInfo().quantidade }}</p>
     </div>
 
     <div
-      class="flex-grow py-1 text-center rounded-md shadow-lg max-w-48 bg-background-400"
+      class="flex-grow py-1 text-center rounded-md shadow-lg max-w-48 bg-background-variant-light-1"
     >
       <h2 class="text-lg font-bold">Valor Total</h2>
       <p class="font-bold">
@@ -37,83 +39,100 @@
     </div>
   </div>
 
-  <app-tabs
-    class="lg:w-max"
-    [tabs]="tabsTipoPagamentos"
-    [ngModel]="tabSelecionada()"
-    (ngModelChange)="tabSelecionada.set($event)"
-  ></app-tabs>
-
-  <div class="flex justify-end gap-2 mt-3">
-    <div
-      class="flex items-center rounded-md shadow-xl cursor-pointer ps-3 bg-background-300/60 text-secondary-500"
-      (click)="setOrder('descricao')"
-      [class.opacity-80]="orderBy() !== 'descricao'"
+  <div class="flex items-end justify-between gap-2 mt-3 mb-2">
+    <button
+      appButton
+      color="accent-variant"
+      (click)="modalCadastroDespesa.set(true)"
     >
-      <span>Nome</span>
-      <span
-        class="transition-all min-w-3 material-symbols-outlined"
-        [class.rotate-180]="orderDirection() === -1"
-      >
-        @if (orderBy() === "descricao") { arrow_drop_up}
-      </span>
-    </div>
+      Nova Despesa
+    </button>
 
-    <div
-      class="flex items-center rounded-md cursor-pointer ps-3 bg-background-300/60 text-secondary-500"
-      (click)="setOrder('valor')"
-      [class.opacity-80]="orderBy() !== 'valor'"
-    >
-      <span>Valor</span>
-
-      <span
-        class="transition-all min-w-3 material-symbols-outlined"
-        [class.rotate-180]="orderDirection() === -1"
+    <div class="flex justify-end gap-2">
+      <div
+        class="flex items-center rounded-md shadow-xl cursor-pointer ps-3 bg-secondary-variant-1 text-secondary-base-contrast"
+        (click)="setOrder('descricao')"
+        [class.opacity-80]="orderBy() !== 'descricao'"
       >
-        @if (orderBy() === "valor") { arrow_drop_up }
-      </span>
+        <span>Nome</span>
+        <span
+          class="transition-all min-w-3 material-symbols-outlined"
+          [class.rotate-180]="orderDirection() === -1"
+        >
+          @if (orderBy() === "descricao") { arrow_drop_up}
+        </span>
+      </div>
+
+      <div
+        class="flex items-center rounded-md cursor-pointer ps-3 bg-secondary-variant-1 text-secondary-base-contrast"
+        (click)="setOrder('valor')"
+        [class.opacity-80]="orderBy() !== 'valor'"
+      >
+        <span>Valor</span>
+
+        <span
+          class="transition-all min-w-3 material-symbols-outlined"
+          [class.rotate-180]="orderDirection() === -1"
+        >
+          @if (orderBy() === "valor") { arrow_drop_up }
+        </span>
+      </div>
     </div>
   </div>
 
-  <div class="relative grid gap-4 mt-1 overflow-auto min-h-60">
+  <div class="relative grid w-full gap-4 mt-1 min-h-60">
     <app-skeleton-loader [loading]="fetchingDespesas()"></app-skeleton-loader>
 
     @for(despesa of despesasFiltradas(); track $index) {
-    <div class="grid w-full gap-1 px-4 py-2 rounded-md h-max bg-background-600">
-      <header class="relative pb-1 border-b border-background-400">
-        <h1>{{ despesa.descricao }}</h1>
-        <h2 class="text-lg font-bold">
-          {{ despesa.valor | currency : "BRL" }}
-        </h2>
-
-        <button
-          class="absolute top-0 h-6 px-1 transition-all rounded-md right-1 text-danger-500 hover:bg-danger-500/10"
-          (click)="deleteDespesa(despesa)"
-        >
-          <span class="material-symbols-outlined">delete</span>
-        </button>
-      </header>
-
-      <footer class="flex items-center justify-between gap-5">
-        <div class="flex flex-wrap gap-1 py-1">
-          @for (tag of despesa.tags; track $index) {
-          <span
-            class="px-2 truncate rounded-md bg-background-400 w-max max-w-80"
-            [title]="tag"
-          >
-            {{ tag }}
-          </span>
-          }
+    <div
+      class="grid w-full gap-1 px-3 rounded-md shadow-lg h-max bg-background-variant-light-1"
+    >
+      <header
+        class="grid grid-cols-[1fr_auto] gap-2 grid-rows-1 pt-3 pb-1 border-b border-background-base"
+      >
+        <div>
+          <h1 class="break-all">
+            {{ despesa.descricao }}
+          </h1>
+          <h2 class="text-lg font-bold">
+            {{ despesa.valor | currency : "BRL" }}
+          </h2>
         </div>
 
-        <div>
+        <div class="flex justify-end h-7">
           <button
-            class="flex items-center gap-1 px-2 transition-all rounded-md text-primary-400 hover:bg-primary-400/10"
+            class="flex items-center gap-[2px] lg:gap-1 px-2 py-1 text-sm transition-all rounded-md lg:text-md me-1 text-primary-base-contrast bg-primary-variant-1/90 hover:bg-primary-base"
             (click)="editDespesa(despesa)"
+            title="Editar Despesa"
           >
             Editar
-            <span class="material-symbols-outlined">box_edit</span>
+            <span class="scale-90 lg:scale-100 material-symbols-outlined"
+              >box_edit</span
+            >
           </button>
+
+          <button
+            class="flex items-center px-1 py-1 transition-all rounded-md text-feedback-error-contrast/90 bg-feedback-error/90 hover:bg-feedback-error"
+            (click)="deleteDespesa(despesa)"
+            title="Deletar Despesa"
+          >
+            <span class="scale-90 material-symbols-outlined lg:scale-100"
+              >delete</span
+            >
+          </button>
+        </div>
+      </header>
+
+      <footer class="w-full pt-1 pb-2 overflow-auto">
+        <div class="flex gap-1 overflow-auto w-max">
+          @for (tag of despesa.tags; track $index) {
+          <span
+            class="px-2 text-sm truncate rounded-md shadow-lg bg-background-variant-light-2 w-max max-w-80 lg:text-md"
+            [title]="tag"
+          >
+            {{ tag.value }}
+          </span>
+          }
         </div>
       </footer>
     </div>
@@ -132,6 +151,22 @@
 
 <app-modal
   class="rounded-md"
+  [open]="modalCadastroDespesa()"
+  (close)="modalCadastroDespesa.set(false)"
+>
+  @if(modalCadastroDespesa()) {
+  <div
+    class="container w-[95vw] lg:w-[90vw] max-w-[80rem] h-[97vh] lg:h-[90vh]"
+  >
+    <app-despesa-form
+      (despesaCreated)="handleDespesaCreated($event)"
+    ></app-despesa-form>
+  </div>
+  }
+</app-modal>
+
+<app-modal
+  class="rounded-md"
   [open]="modalDeleteDespesa()"
   (close)="modalDeleteDespesa.set(false)"
 >
@@ -142,12 +177,17 @@
 </app-modal>
 
 <app-modal
-  class="w-11/12 max-w-3xl overflow-auto rounded-md max-h-[90vh]"
+  position="right"
+  class="rounded-md"
   [open]="modalEditDespesa()"
-  (close)="modalEditDespesa.set(false)"
+  (close)="modalEditDespesa.set(false); despesaToEdit.set({})"
 >
-  <app-edit-despesa
-    [despesa]="despesaToEdit()"
-    (despesaUpdated)="despesaUpdatedHandler($event)"
-  ></app-edit-despesa>
+  <div
+    class="container w-[99vw] max-w-3xl rounded-md h-full min-h-[100vh] max-h-[100vh]"
+  >
+    <app-edit-despesa
+      [despesa]="despesaToEdit()"
+      (despesaUpdated)="despesaUpdatedHandler($event)"
+    ></app-edit-despesa>
+  </div>
 </app-modal>

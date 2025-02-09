@@ -1,6 +1,6 @@
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { JsonPipe, NgTemplateOutlet } from '@angular/common';
-import { Component, contentChildren, EventEmitter, inject, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, contentChildren, EventEmitter, inject, input, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
 import { KtdGridBackgroundCfg, KtdGridComponent, KtdGridLayout, KtdGridLayoutItem, KtdGridModule, KtdResizeEnd, ktdTrackById } from '@katoid/angular-grid-layout';
 import { debounceTime, filter, fromEvent, merge, Observable, of, Subscription } from 'rxjs';
 import { GridItemDirective } from '../grid-item-directive/grid-item.directive';
@@ -10,12 +10,14 @@ import { SkeletonLoaderComponent } from '../../skeleton-loader/skeleton-loader.c
 export type customLayoutItem = KtdGridLayoutItem & { originalWidth?: number, originalX?: number, originalY?: number }
 export type gridLayout = customLayoutItem[]
 
+
+// 1 Coluna causa um erro ao realizar o drag/resize dos items do grid
 const BREAKPOINTS_COLS_CONFIG = {
-  [Breakpoints.XSmall]: 1,
+  [Breakpoints.XSmall]: 2,
   [Breakpoints.Small]: 2,
   [Breakpoints.Medium]: 4,
-  [Breakpoints.Large]: 4,
-  [Breakpoints.XLarge]: 6,
+  [Breakpoints.Large]: 6,
+  [Breakpoints.XLarge]: 8,
 }
 
 @Component({
@@ -33,6 +35,7 @@ export class GridComponent implements OnInit, OnDestroy {
   @Input() updateLayout: Observable<void> = of()
   @Input() layout: gridLayout = []
 
+  scrollableParentId = input('main-content')
   responsive = inject(BreakpointObserver)
 
   subs: Subscription[] = []
@@ -47,10 +50,10 @@ export class GridComponent implements OnInit, OnDestroy {
   backgroundConfig: Required<KtdGridBackgroundCfg> = {
     show: 'whenDragging',
     borderColor: 'transparent',
-    gapColor: 'hsla(var(--background-600) / 0.5)',
+    gapColor: 'hsla(var(--background-variant-dark-1) / 0.5)',
     borderWidth: 0,
-    rowColor: 'hsla(var(--white-500) / 0.02)',
-    columnColor: 'hsla(var(--white-500) / 0.02)',
+    rowColor: 'hsla(0 0 100 / 0.02)',
+    columnColor: 'hsla(0 0 100 / 0.02)',
   };
 
   ngOnInit(): void {
@@ -58,7 +61,7 @@ export class GridComponent implements OnInit, OnDestroy {
     this.observeBreakpointChanges()
     this.subs.push(this.updateLayout.subscribe(() => {
       this.updateLayoutSize(this.cols)
-      localStorage.setItem("layout", JSON.stringify(this.layout))
+      // localStorage.setItem("layout", JSON.stringify(this.layout))
     }))
   }
 
@@ -72,7 +75,7 @@ export class GridComponent implements OnInit, OnDestroy {
 
 
   onLayoutUpdated(_layout: KtdGridLayout) {
-    localStorage.setItem("layout", JSON.stringify(this.layout))
+    // localStorage.setItem("layout", JSON.stringify(this.layout))
     this.updateGrid()
   }
 
@@ -92,7 +95,6 @@ export class GridComponent implements OnInit, OnDestroy {
 
   setLayout(newLayout: gridLayout) {
     for (let updatedItem of newLayout) {
-
       let itemToUpdate = this.layout.find(item => item.id === updatedItem["id"])
 
       if (!itemToUpdate) return
@@ -101,6 +103,8 @@ export class GridComponent implements OnInit, OnDestroy {
       itemToUpdate["originalX"] = updatedItem["x"]
       itemToUpdate["y"] = updatedItem["y"]
       itemToUpdate["originalY"] = updatedItem["y"]
+
+      itemToUpdate = { ...itemToUpdate }
     }
   }
 

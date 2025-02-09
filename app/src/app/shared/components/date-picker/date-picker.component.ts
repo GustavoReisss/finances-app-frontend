@@ -1,9 +1,11 @@
 import { OverlayModule, ScrollStrategy, ScrollStrategyOptions } from '@angular/cdk/overlay';
-import { Component, computed, effect, signal, forwardRef, input, Input } from '@angular/core';
+import { Component, computed, signal, forwardRef, input, Input } from '@angular/core';
 import { meses } from './data'
 import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { NgClass } from '@angular/common';
 
 const CURRENT_DATE = new Date()
+
 
 export interface Day {
   date: Date
@@ -14,10 +16,12 @@ export interface Day {
 
 const validateDate = new RegExp("^\\d{4}-\\d{2}-\\d{2}$")
 
+const INVALID_DATE = 'Invalid Date'
+
 @Component({
   selector: 'app-date-picker',
   standalone: true,
-  imports: [OverlayModule, FormsModule],
+  imports: [OverlayModule, FormsModule, NgClass],
   templateUrl: './date-picker.component.html',
   styleUrl: './date-picker.component.scss',
   providers: [
@@ -94,7 +98,14 @@ export class DatePickerComponent implements ControlValueAccessor {
 
   /* ControlValueAccessor Methods */
   writeValue(value: string): void {
+
+    if (this.checkInvalidDate(value) === INVALID_DATE) {
+      value = INVALID_DATE
+      this.onChange(this.checkInvalidDate(value))
+    }
+
     this.selectedDate.set(value)
+
     this.updateSelectedMonthAndYear()
   }
 
@@ -120,19 +131,19 @@ export class DatePickerComponent implements ControlValueAccessor {
       input.value = "" // Forces input value to be empty
     }
 
-    this.selectedDate.set(newValue)
+    this.setValueToControl(newValue)
     this.updateSelectedMonthAndYear()
   }
 
-  setValueToControl = effect(() => {
-    let value = this.selectedDate()
+  checkInvalidDate(date: string): string {
+    return !validateDate.test(date) ? INVALID_DATE : date
+  }
 
-    if (!validateDate.test(value)) {
-      value = 'Invalid Date'
-    }
-
-    this.onChange(value)
-  })
+  setValueToControl(date: string) {
+    date = this.checkInvalidDate(date)
+    this.selectedDate.set(date)
+    this.onChange(date)
+  }
 
   changeMonth(incrementalNumberOfMonths: number) {
     const newDate = new Date(this.selectedYear(), this.selectedMonth() + incrementalNumberOfMonths)
@@ -190,7 +201,7 @@ export class DatePickerComponent implements ControlValueAccessor {
   }
 
   pickDate(day: Day) {
-    this.selectedDate.set(day.formatedData)
+    this.setValueToControl(day.formatedData)
     this.closeDatePicker()
   }
 }

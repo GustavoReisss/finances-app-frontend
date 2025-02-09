@@ -1,0 +1,62 @@
+<app-modal
+  class="rounded-md"
+  [open]="modalUploadB3()"
+  (close)="modalUploadB3.set(false)"
+>
+  <div class="container w-[90vw] max-w-[80rem] h-[90vh] py-8 px-6">Upload</div>
+</app-modal>
+
+<div class="container pb-4">
+  <h1 class="text-2xl font-bold">Investimentos</h1>
+
+  <h2>Aqui estão seus Investimentos cadastrados:</h2>
+
+  <button appButton (click)="modalUploadB3.set(true)">Importar da B3</button>
+
+  <div class="flex flex-wrap justify-end gap-2 pt-2 pb-6">
+    <div
+      class="flex-grow py-1 text-center rounded-md shadow-lg max-w-48 bg-background-variant-light-1"
+    >
+      <h2 class="text-lg font-bold">Investimentos</h2>
+      <p class="font-bold">xxx</p>
+    </div>
+  </div>
+
+  <app-tabs
+    class="lg:w-max"
+    [tabs]="tabsTipoAtivos"
+    [ngModel]="tabSelecionada()"
+    (ngModelChange)="tabSelecionada.set($event)"
+  ></app-tabs>
+
+  <div
+    class="relative mt-1 rounded-md shadow-lg min-h-60 bg-background-variant-light-1"
+  >
+    <app-skeleton-loader [loading]="fetchingAtivos()"></app-skeleton-loader>
+
+    <div class="w-11/12 mx-auto overflow-auto">
+      <table class="table-default">
+        <thead>
+          <tr>
+            <th>Ativo</th>
+            <th>Quantidade</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          @for(ativo of ativos(); track $index) {
+          <tr>
+            <td>{{ ativo.codigo }}</td>
+            <td>{{ ativo.quantidade }}</td>
+          </tr>
+          } @empty {
+
+          <tr>
+            <td colspan="2" class="text-center">Nenhum ativo cadastrado</td>
+          </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

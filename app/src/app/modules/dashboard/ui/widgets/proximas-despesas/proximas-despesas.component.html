@@ -1,0 +1,54 @@
+<div
+  class="grid grid-rows-[auto_1fr] relative h-full max-w-full max-h-full pt-4"
+>
+  <p class="mb-2 text-lg font-extrabold leading-none text-center">
+    Próximas Despesas
+  </p>
+
+  <div
+    class="flex flex-col gap-3 overflow-auto scrollbar pe-3 scrollbar-track-background-base scrollbar-thumb-background-variant-light-1"
+  >
+    @for(data of despesasPorData().datas; track $index) {
+
+    <h2>{{ data | date : "d MMMM" }}</h2>
+    @for (despesa of despesasPorData().despesas[data]; track $index) {
+
+    <div class="grid grid-cols-[auto_1fr_auto] gap-3">
+      <div
+        class="grid w-12 h-12 rounded-md shadow-md bg-background-base/50 place-items-center"
+      >
+        <span class="scale-110 material-symbols-outlined text-text-body-1/60">
+          receipt_long
+        </span>
+      </div>
+
+      <div class="flex items-center min-w-full">
+        <p class="text-sm font-light leading-5 line-clamp-2 text-text-body-1">
+          {{ despesa.descricao }}
+        </p>
+      </div>
+
+      <div class="flex flex-col items-end justify-center">
+        <p class="text-sm font-medium text-feedback-error">
+          - {{ despesa.valor | currency : "BRL" }}
+        </p>
+
+        <p class="text-xs font-medium text-text-body-2/55">
+          {{ despesa.categoriaPagamento }}
+        </p>
+      </div>
+    </div>
+
+    } } @empty {
+    <p class="font-bold text-center text-text-body-2/70">
+      Nenhuma despesa cadastrada!
+    </p>
+    } @if(despesasPorData().datas.length > 0) {
+
+    <span class="text-xs text-center text-text-body-2/65">
+      Despesas até:
+      {{ despesasPorData().dataLimite | date : "dd/MM/yyyy" }}</span
+    >
+    }
+  </div>
+</div>

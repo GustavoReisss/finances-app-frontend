@@ -1,11 +1,11 @@
 @for(tab of tabs(); track tab.label) {
 <div
-  class="flex-grow px-4 py-1 text-center truncate rounded-md cursor-pointer min-w-36 basis-0"
+  class="flex-grow px-4 py-1 text-center truncate rounded-md cursor-pointer min-w-32 basis-0"
   [title]="tab.label"
   (click)="setCurrentTab(tab)"
-  [class.bg-background-400]="tab.value === selectedTab()"
-  [class.hover:bg-background-500]="tab.value !== selectedTab()"
+  [class.bg-background-base]="tab.value === selectedTab()"
+  [class.hover:bg-background-base]="tab.value !== selectedTab()"
 >
-  <span class="text-xl">{{ tab.label }}</span>
+  <span class="text-lg">{{ tab.label }}</span>
 </div>
 }

@@ -11,20 +11,24 @@ export const routes: Routes = [
         component: DefaultLayoutComponent,
         children: [
             {
+                path: 'dashboard',
+                loadComponent: () => import('./modules/dashboard/dashboard.component').then(c => c.DashboardComponent)
+            },
+            {
                 path: 'organizacao-financeira',
                 loadChildren: () => import('./modules/organizacao-financeira/organizacao-financeira.routes').then(m => m.routes)
             },
             {
-                path: 'acoes',
-                loadComponent: () => import('./modules/acoes/acoes.component').then(c => c.AcoesComponent)
+                path: 'investimentos',
+                loadComponent: () => import('./modules/investimentos/investimentos.component').then(c => c.InvestimentosComponent)
             },
             {
-                path: 'steps',
-                loadChildren: () => import('./modules/cadastrar-steps/cadastrar-steps.routes').then(m => m.routes)
+                path: 'educacao-financeira',
+                loadComponent: () => import('./modules/educacao-financeira/educacao-financeira.component').then(c => c.EducacaoFinanceiraComponent)
             },
             {
                 path: '',
-                redirectTo: 'organizacao-financeira',
+                redirectTo: 'dashboard',
                 pathMatch: 'full'
             }
         ]

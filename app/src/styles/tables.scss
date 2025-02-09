@@ -21,14 +21,20 @@
     }
 }
 
+.table-default {
+    @extend .__table;
+    --table-border-color: var(--text-body-1);
+    --table-header-color: var(--text-body-1);
+}
+
 .table-primary {
     @extend .__table;
-    --table-border-color: var(--primary-700);
-    --table-header-color: var(--primary-500);
+    --table-border-color: var(--primary-variant-1);
+    --table-header-color: var(--primary-base);
 }
 
 .table-secondary {
     @extend .__table;
-    --table-border-color: var(--secondary-700);
-    --table-header-color: var(--secondary-400);
+    --table-border-color: var(--secondary-variant-1);
+    --table-header-color: var(--secondary-base);
 }

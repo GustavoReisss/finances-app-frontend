@@ -18,17 +18,32 @@ const POSITION_STYLE: PositionStyle = {
   standalone: true,
   imports: [],
   templateUrl: './modal.component.html',
-  styleUrl: './modal.component.scss',
+  styleUrls: ['./modal.component.scss'],
   animations: [
-    trigger("modalChangeVisibility", [
-      transition(':enter', [
+    trigger("modalAnimation", [
+      transition('void => right', [
+        style({ transform: 'translateX(100%) translateY(-50%)' }),
+        animate("300ms ease-out", style({ transform: 'translateX(0) translateY(-50%)' }))
+      ]),
+      transition('right => void', [
+        animate("300ms ease-out", style({ transform: 'translateX(100%) translateY(-50%)' }))
+      ]),
+      transition('void => left', [
+        style({ transform: 'translateX(-100%) translateY(-50%)' }),
+        animate("300ms ease-out", style({ transform: 'translateX(0) translateY(-50%)' }))
+      ]),
+      transition('left => void', [
+        animate("300ms ease-out", style({ transform: 'translateX(-100%) translateY(-50%)' }))
+      ]),
+      transition('void => center', [
         style({ opacity: 0 }),
         animate("200ms ease-out")
       ]),
-      transition(':leave', [
+      transition('center => void', [
         animate("200ms ease-out", style({ opacity: 0 })),
       ]),
     ]),
+
     trigger("backdropDelay", [
       transition(':enter', [
         style({ opacity: 0 }),
@@ -40,7 +55,7 @@ const POSITION_STYLE: PositionStyle = {
     ])
   ],
   host: {
-    class: 'fixed z-50'
+    '[class]': "open() ? 'fixed z-50' : 'none'"
   }
 })
 export class ModalComponent {

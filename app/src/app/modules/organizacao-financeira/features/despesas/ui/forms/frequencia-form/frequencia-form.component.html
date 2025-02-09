@@ -1,0 +1,96 @@
+<div class="py-4 border-b border-text-body-1/20">
+  <h2 class="pb-2 text-lg font-bold text-primary-base">
+    Frequência de Pagamento <span class="text-sm text-feedback-error">*</span>
+  </h2>
+
+  <div class="flex gap-5">
+    @for(frequencia of frequenciasOptions; track $index) {
+    <label class="inline-flex items-center gap-2">
+      <app-checkbox
+        (valueChange)="handleFrequenciaValueChange(frequencia)"
+        [checked]="frequenciaSelecionada() === frequencia"
+      ></app-checkbox>
+      {{ frequencia }}
+    </label>
+    }
+  </div>
+
+  <ng-container [formGroup]="detalhesFrequenciaForm">
+    @if(frequenciaSelecionada() === "Mensal") {
+
+    <div class="pt-3 max-w-36">
+      <label>
+        Dia Pagamento <span class="text-sm text-feedback-error">*</span>
+        <input
+          appInput
+          class="w-full"
+          type="number"
+          max="31"
+          min="1"
+          placeholder="Dia"
+          formControlName="diaPagamento"
+        />
+      </label>
+    </div>
+
+    } @else if (frequenciaSelecionada() === "Semanal") {
+    <div class="pt-2 max-w-96">
+      <label>
+        Dia da Semana <span class="text-sm text-feedback-error">*</span>
+        <app-combobox
+          [options]="daysOptions"
+          labelKey="label"
+          valueKey="value"
+          formControlName="diaSemana"
+        ></app-combobox>
+      </label>
+    </div>
+
+    } @else if (frequenciaSelecionada() === "Outro") {
+
+    <div class="grid gap-4 pt-3">
+      <div class="flex items-end max-w-xl grid-cols-2 gap-2">
+        <label class="flex-grow sm:max-w-32">
+          <p>A cada <span class="text-sm text-feedback-error">*</span></p>
+          <input
+            appInput
+            type="number"
+            min="1"
+            placeholder="1, 2, 3..."
+            formControlName="quantidade"
+          />
+        </label>
+
+        <label class="flex-grow">
+          <app-combobox
+            [options]="['Dias', 'Semanas', 'Meses', 'Anos']"
+            placeholder="Dia(s), Semana(s), Mês(es) ou Ano(s)"
+            formControlName="unidade"
+          ></app-combobox>
+        </label>
+      </div>
+
+      <div [formGroup]="despesaForm" class="max-w-xl">
+        <label>
+          <span>
+            Data Próximo Pagamento
+            <span class="text-sm text-feedback-error">*</span>
+          </span>
+
+          <app-date-picker
+            [min]="minDate"
+            [max]="maxDate"
+            formControlName="dataProximoPagamento"
+          ></app-date-picker>
+          @if (minDate) {
+          <p class="pt-1 text-xs font-bold">
+            Data Mínima: {{ minDate | date : "dd/MM/YYYY" }}
+          </p>
+          }
+        </label>
+      </div>
+    </div>
+
+    }
+  </ng-container>
+</div>

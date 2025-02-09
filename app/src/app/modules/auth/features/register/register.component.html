@@ -1,4 +1,6 @@
-<div class="p-4 border rounded-md border-primary-500 bg-background-300/50">
+<div
+  class="p-4 border rounded-md border-primary-base bg-background-variant-light-2/50"
+>
   <h1 class="pb-8 text-2xl font-bold text-center">Cadastro</h1>
 
   <form [formGroup]="userRegisterForm">
@@ -25,7 +27,7 @@
 
       @if(errorMessage()) {
       <p
-        class="p-2 mt-2 border rounded-md bg-danger-500/50 border-danger-500 text-white-500"
+        class="p-2 mt-2 border rounded-md bg-feedback-error/50 border-feedback-error text-text-body-1"
       >
         {{ errorMessage() }}
       </p>
@@ -42,10 +44,10 @@
     Registrar-se
   </button>
 
-  <p class="text-center text-text-500/70">
+  <p class="text-center text-text-body-1/70">
     Já possui uma conta?
     <span
-      class="font-bold cursor-pointer ps-1 text-primary-500"
+      class="font-bold cursor-pointer ps-1 text-primary-base"
       routerLink="/auth/login"
       >Entre!</span
     >

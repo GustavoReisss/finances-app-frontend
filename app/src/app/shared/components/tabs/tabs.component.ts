@@ -20,7 +20,7 @@ export interface TabOption {
     }
   ],
   host: {
-    "class": "p-[6px] bg-background-600 rounded-md flex gap-1 overflow-auto scrollbar scrollbar-track-background-600 scrollbar-thumb-background-300"
+    "class": "p-[6px] bg-background-variant-dark-1 rounded-md flex gap-1 overflow-auto scrollbar scrollbar-track-background-variant-dark-1 scrollbar-thumb-background-base"
   }
 })
 export class TabsComponent implements ControlValueAccessor {

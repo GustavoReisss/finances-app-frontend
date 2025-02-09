@@ -1,0 +1,49 @@
+[theme="dark"] {
+    color: hsl(var(--text-body-1));
+
+    // Background
+    // --background-variant-dark-1: 205 53 5;
+    // --background-base: 205 53 8;
+    // --background-variant-light-1: 205 53 13;
+    // --background-variant-light-2: 205 53 25;
+
+    --background-variant-dark-1: 205 53 2;
+    --background-base: 205 53 6;
+    --background-variant-light-1: 205 53 11;
+    --background-variant-light-2: 205 53 20;
+
+    // Text
+    --text-body-1: 205 51 85;
+    --text-body-2: 205 51 80;
+
+    // Primary
+    --primary-base: 205 53 35;
+    --primary-base-contrast: 205 53 90;
+    --primary-variant-1: 205 53 25;
+    --primary-variant-1-contrast: 205 53 90;
+
+    // Secondary
+    --secondary-base: 186 53 35;
+    --secondary-base-contrast: 186 53 90;
+    --secondary-variant-1: 186 53 25;
+    --secondary-variant-1-contrast: 186 53 90;
+
+    // Accent
+    --accent-base: 146 53 35;
+    --accent-base-contrast: 146 53 90;
+    --accent-variant-1: 146 53 25;
+    --accent-variant-1-contrast: 146 53 90;
+
+    // Feedback
+    --feedback-success: 120 53 26;
+    --feedback-success-contrast: 120 53 98;
+
+    --feedback-error: 0 53 38;
+    --feedback-error-contrast: 0 53 98;
+
+    --feedback-warning: 40 53 40;
+    --feedback-warning-contrast: 40 53 98;
+
+    --feedback-info: 210 53 35;
+    --feedback-info-contrast: 210 53 98;
+}

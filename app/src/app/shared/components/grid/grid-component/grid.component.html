@@ -10,23 +10,28 @@
   (dragEnded)="setLayout($event.layout)"
   [backgroundConfig]="backgroundConfig"
   class="relative"
+  [scrollableParent]="scrollableParentId()"
+  [scrollSpeed]="6"
 >
   @for(gridItem of gridItems(); track $index) {
   <ktd-grid-item
     [id]="gridItem.id"
-    class="px-4 py-2 rounded-md bg-background-400"
+    class="rounded-md shadow-lg bg-background-variant-light-1"
   >
     <app-skeleton-loader
       class="rounded-md"
       [loading]="gridItem.loading()"
     ></app-skeleton-loader>
+
     <span
       ktdGridDragHandle
       class="absolute top-0 left-0 z-10 p-2 material-symbols-outlined cursor-grab active:cursor-grabbing"
       >drag_indicator</span
     >
 
-    <ng-container [ngTemplateOutlet]="gridItem.template"></ng-container>
+    <div class="w-full h-full px-3 pt-2 pb-6 overflow-auto">
+      <ng-container [ngTemplateOutlet]="gridItem.template"></ng-container>
+    </div>
 
     <span
       ktdGridResizeHandle
@@ -35,7 +40,7 @@
     >
 
     <ng-template ktdGridItemPlaceholder>
-      <div class="w-full h-full bg-primary-500"></div>
+      <div class="w-full h-full bg-primary-base"></div>
     </ng-template>
   </ktd-grid-item>
   }

@@ -10,12 +10,12 @@
 >
   <input
     type="checkbox"
-    class="relative w-5 h-5 transition-all border rounded-md appearance-none cursor-pointer peer border-primary-500 before:absolute before:top-2/4 before:left-2/4 before:block before:h-9 before:w-9 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-primary-500 before:opacity-0 before:transition-opacity checked:bg-primary-500 checked:before:bg-primary-500 hover:before:opacity-10"
+    class="relative w-5 h-5 transition-all border rounded-md appearance-none cursor-pointer bg-background-base/80 peer border-text-body-2/20 before:absolute before:top-2/4 before:left-2/4 before:block before:h-9 before:w-9 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-primary-base before:opacity-0 before:transition-opacity checked:bg-primary-base checked:before:bg-primary-base hover:before:opacity-10"
     id="check"
     [checked]="checked()"
   />
   <span
-    class="absolute leading-none text-white transition-opacity opacity-0 pointer-events-none top-2/4 left-2/4 -translate-y-2/4 -translate-x-2/4 peer-checked:opacity-100"
+    class="absolute leading-none transition-opacity opacity-0 pointer-events-none text-primary-base-contrast top-2/4 left-2/4 -translate-y-2/4 -translate-x-2/4 peer-checked:opacity-100"
   >
     <span class="text-lg material-symbols-rounded icon-bold">{{ icon() }}</span>
   </span>

@@ -1,6 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { HttpService } from '../../../../shared/services/http.service';
+import { HttpService } from '../../../../shared/services/http/http.service';
 import { InputDirective } from '../../../../shared/directives/input/input.directive';
 import { ButtonDirective } from '../../../../shared/directives/button/button.directive';
 import { Router, RouterLink } from '@angular/router';

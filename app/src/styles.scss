@@ -11,6 +11,8 @@
 
 @import '@angular/cdk/overlay-prebuilt.css';
 
+@import './styles/themes/light.scss';
+@import './styles/themes/dark.scss';
 
 * {
     padding: 0;
@@ -29,8 +31,10 @@ html {
 body {
     width: 100%;
     height: 100%;
+    max-height: 100vh;
     display: table-cell;
     overflow: auto;
+    background-color: hsl(var(--background-variant-dark-1));
 }
 
 input[type='number']::-webkit-outer-spin-button,
@@ -38,69 +42,18 @@ input[type='number']::-webkit-inner-spin-button,
 input[type='number'] {
     -webkit-appearance: none;
     margin: 0;
+    appearance: initial;
     -moz-appearance: textfield !important;
 }
 
 
 :root {
     font-family: 'Inter', sans-serif;
-}
-
-:root {
-    color: hsl(var(--text-500));
 
     // .apexcharts-tooltip {
     //     background: #f3f3f3;
     //     color: orange;
     // }
 
-    // Background
-    --background-300: 205 53 15;
-    --background-400: 205 53 10;
-    --background-500: 205 53 8;
-    --background-600: 205 53 5;
-
-    // Text
-    --text-300: 205 51 95;
-    --text-400: 205 51 90;
-    --text-500: 205 51 85;
-    --text-600: 205 51 80;
-    --text-700: 205 35 70;
-
-    // Primary
-    --primary-300: 205 53 45;
-    --primary-400: 205 53 40;
-    --primary-500: 205 53 35;
-    --primary-600: 205 53 30;
-    --primary-700: 205 53 25;
-
-    // Secondary
-    --secondary-300: 186 53 45;
-    --secondary-400: 186 53 40;
-    --secondary-500: 186 53 35;
-    --secondary-600: 186 53 30;
-    --secondary-700: 186 53 25;
-
-    // Accent
-    --accent-300: 146 53 45;
-    --accent-400: 146 53 40;
-    --accent-500: 146 53 35;
-    --accent-600: 146 53 30;
-    --accent-700: 146 53 25;
-
-
-    --cancel-500: 290 53% 35%;
-    --danger-500: 290 53% 35%;
-
-
-    // White
-    --white-500: 208 52 95;
-    --white-600: 208 7 85;
-    --white-700: 208 7 75;
-}
-
-
-.light {
-    --background-500: 205 53% 99%;
-    --text-500: 205 51 10;
+    // --feedback-error: 290 53% 35%;
 }

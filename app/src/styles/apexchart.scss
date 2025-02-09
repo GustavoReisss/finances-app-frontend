@@ -1,31 +1,31 @@
 .apexcharts-tooltip-title {
-    background: hsl(var(--background-500)) !important;
-    border-color: hsl(var(--background-600)) !important;
-    color: hsl(var(--text-500));
+    background: hsl(var(--background-base)) !important;
+    border-color: hsl(var(--background-variant-dark-1)) !important;
+    color: hsl(var(--text-body-1));
 }
 
 .apexcharts-tooltip {
-    background: hsla(var(--background-500) / 0.9) !important;
-    border-color: hsl(var(--background-600)) !important;
-    color: hsl(var(--text-500));
+    background: hsla(var(--background-base) / 0.9) !important;
+    border-color: hsl(var(--background-variant-dark-1)) !important;
+    color: hsl(var(--text-body-1));
 }
 
 .apexcharts-xaxis-label,
 .apexcharts-yaxis-label {
-    fill: hsl(var(--text-500));
+    fill: hsl(var(--text-body-1));
 }
 
 
 .apexcharts-menu {
-    background: hsla(var(--background-600) / 0.9) !important;
-    border-color: hsl(var(--background-500)) !important;
-    color: hsl(var(--text-500));
+    background: hsla(var(--background-variant-dark-1) / 0.9) !important;
+    border-color: hsl(var(--background-base)) !important;
+    color: hsl(var(--text-body-1));
 
     .apexcharts-menu-item {
         font-size: 1em;
 
         &:hover {
-            background: hsla(var(--background-400) / 0.9) !important;
+            background: hsla(var(--background-variant-light-1) / 0.9) !important;
         }
     }
 }

@@ -1,6 +1,6 @@
 import { CurrencyPipe } from '@angular/common';
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
-import { HttpService } from '../../../../shared/services/http.service';
+import { HttpService } from '../../../../shared/services/http/http.service';
 import { Despesa } from '../../../../shared/interfaces/despesa.interface';
 import { DespesaFormComponent } from './ui/despesa-form/despesa-form.component';
 import { delay, finalize, map } from 'rxjs';
@@ -12,10 +12,16 @@ import { ButtonDirective } from '../../../../shared/directives/button/button.dir
 import { DeleteDespesaAlertComponent } from './ui/delete-despesa-alert/delete-despesa-alert.component';
 import { EditDespesaComponent } from './ui/edit-despesa/edit-despesa.component';
 import { daysOptions } from './shared/despesa-form.utils';
+import { RouterLink } from '@angular/router';
 
-type DespesaComTag = Despesa & { tags: string[] }
+type DespesaComTag = Despesa & { tags: Tag[] }
 type OrderBy = "descricao" | "valor"
 type OrderDirection = -1 | 1 // asc || desc
+
+interface Tag {
+  type: string
+  value: string
+}
 
 @Component({
   selector: 'app-despesas',
@@ -29,7 +35,8 @@ type OrderDirection = -1 | 1 // asc || desc
     ModalComponent,
     ButtonDirective,
     DeleteDespesaAlertComponent,
-    EditDespesaComponent
+    EditDespesaComponent,
+    RouterLink
   ],
   templateUrl: './despesas.component.html',
   styleUrl: './despesas.component.scss'
@@ -109,30 +116,49 @@ export class DespesasComponent implements OnInit {
       .subscribe(res => { this.despesas.set(res); console.log(res) })
   }
 
-  createTags(despesa: Despesa): string[] {
-    let extraTags = []
+  createTags(despesa: Despesa): Tag[] {
+    let extraTags: Tag[] = []
 
     if (despesa.tipoPagamento == 'À Vista') {
       const dataPagamento = new Date(despesa.dataProximoPagamento!)
       dataPagamento.setHours(dataPagamento.getHours() + 3)
 
-      extraTags.push(`Pagamento dia ${dataPagamento.toLocaleDateString('pt-br')}`)
+      extraTags.push({
+        type: "Frequencia",
+        value: `Pagamento dia ${dataPagamento.toLocaleDateString('pt-br')}`
+      })
     }
     else {
+      if (despesa.tipoPagamento == 'Parcelado') {
+        extraTags.push({
+          type: "Parcelas",
+          value: `${despesa.parcelaAtual}/${despesa.quantidadeParcelas}`
+        })
+      }
+
       switch (despesa.frequencia) {
         case "Mensal":
-          extraTags.push(`Todo dia ${despesa.detalhesFrequencia?.diaPagamento}`)
+          extraTags.push({
+            type: "Frequencia",
+            value: `Todo dia ${despesa.detalhesFrequencia?.diaPagamento}`
+          })
           break
         case "Semanal":
           const diaSemana = daysOptions.find(el => el.value === despesa.detalhesFrequencia!.diaSemana)
           if (!diaSemana) break
 
           if (["5", "6"].includes(diaSemana.value)) { // Sábado e Domingo
-            extraTags.push(`Todo ${diaSemana.label.toLowerCase()}`)
+            extraTags.push({
+              type: "Frequencia",
+              value: `Todo ${diaSemana.label.toLowerCase()}`
+            })
             break
           }
 
-          extraTags.push(`Toda ${diaSemana.label.toLowerCase()}`)
+          extraTags.push({
+            type: "Frequencia",
+            value: `Toda ${diaSemana.label.toLowerCase()}`
+          })
           break
         case "Outro":
           let { quantidade, unidade } = despesa.detalhesFrequencia!
@@ -143,7 +169,10 @@ export class DespesasComponent implements OnInit {
             unidade = { "Semanas": "Semana", "Anos": "Ano", "Meses": "Mês" }[unidade]
           }
 
-          extraTags.push(`A cada ${quantidade} ${unidade?.toLocaleLowerCase()}`)
+          extraTags.push({
+            type: "Frequencia",
+            value: `A cada ${quantidade} ${unidade?.toLocaleLowerCase()}`
+          })
           break
       }
     }
@@ -151,12 +180,23 @@ export class DespesasComponent implements OnInit {
     if (despesa.dataProximoPagamento && despesa.tipoPagamento !== 'À Vista') {
       const dataPagamento = new Date(despesa.dataProximoPagamento!)
       dataPagamento.setHours(dataPagamento.getHours() + 3)
-      extraTags.push(`Próximo pagamento em ${dataPagamento.toLocaleDateString('pt-br')}`)
+      // extraTags.push(`Próximo pagamento em ${dataPagamento.toLocaleDateString('pt-br')}`)
+      extraTags.push()
+      extraTags.push({
+        type: "proximoPagamento",
+        value: dataPagamento.toLocaleDateString('pt-br')
+      })
     }
 
     return [
-      despesa.tipoPagamento,
-      despesa.categoriaPagamento,
+      {
+        type: "tipoPagamento",
+        value: despesa.tipoPagamento
+      },
+      {
+        type: "categoriaPagamento",
+        value: despesa.categoriaPagamento
+      },
       ...extraTags
     ]
   }
@@ -171,9 +211,9 @@ export class DespesasComponent implements OnInit {
     this.orderDirection.set(1)
   }
 
-  handleDespesaCreated(despesa: Despesa[]) {
+  handleDespesaCreated(despesa: Despesa) {
     this.despesas.update(despesas => {
-      despesas.push({ ...despesa[0], tags: this.createTags(despesa[0]) })
+      despesas.push({ ...despesa, tags: this.createTags(despesa) })
       return [...despesas]
     })
     this.modalCadastroDespesa.set(false)

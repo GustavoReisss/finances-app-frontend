@@ -1,12 +1,10 @@
 <div
-  class="w-[inherit] group-[.ng-dirty.ng-touched.ng-invalid]:*:border-danger-500 group-[.ng-dirty.ng-touched.ng-invalid]:*:text-danger-500"
+  class="w-[inherit] group-[.ng-dirty.ng-touched.ng-invalid]:*:border-feedback-error group-[.ng-dirty.ng-touched.ng-invalid]:*:text-feedback-error"
 >
   <div
     [title]="selectedOption()?.label || placeholder()"
-    class="
-    border rounded-md border-{{ color }}-500
-    cursor-pointer flex justify-between items-center pl-4 pr-2"
-    [class.opacity-70]="disabled"
+    class="flex items-center justify-between pl-4 pr-2 border rounded-md cursor-pointer border-text-body-2/20 bg-background-base/80"
+    [class.opacity-60]="disabled"
     (click)="!disabled && toggle()"
     cdkOverlayOrigin
     #trigger
@@ -22,7 +20,7 @@
       }
     </span>
     <span
-      class="text-lg transition-transform duration-200 material-symbols-outlined opacity-55"
+      class="text-lg transition-transform duration-200 material-symbols-outlined opacity-70"
       [class.rotate-180]="isOpen"
     >
       {{ isOpen ? "collapse_all" : "expand_all" }}
@@ -40,11 +38,9 @@
     (overlayOutsideClick)="isOpen = false"
   >
     <div
-      class="my-1 w-full bg-background-500 rounded-md border border-{{
-        color
-      }}-500 text-lg shadow-xl"
+      class="w-full my-1 text-lg border rounded-md shadow-xl bg-background-base border-text-body-2/20"
     >
-      <div class="border-b border-{{ color }}-500 pl-3 flex items-center">
+      <div class="flex items-center pl-3 border-b border-text-body-2/20">
         <span class="text-2xl material-symbols-outlined opacity-55">
           search
         </span>
@@ -58,12 +54,12 @@
       </div>
 
       <ul
-        class="px-2 py-2 max-h-40 overflow-y-auto scrollbar scrollbar-track-[transparent] scrollbar-thumb-background-300"
+        class="px-2 py-2 max-h-40 overflow-y-auto scrollbar scrollbar-track-[transparent] scrollbar-thumb-background-variant-light-2"
       >
         @if(canAddOption()) {
         <li
           (click)="emitCreateOption()"
-          class="flex items-center gap-1 py-1 pl-1 pr-2 transition duration-300 rounded-md cursor-pointer hover:bg-background-300"
+          class="flex items-center gap-1 py-1 pl-1 pr-2 transition duration-300 rounded-md cursor-pointer hover:bg-background-variant-light-2"
         >
           <span class="w-6 text-2xl material-symbols-outlined"> add </span>
 
@@ -74,7 +70,7 @@
           <div
             [title]="option.label"
             (click)="setOption(option)"
-            class="grid grid-cols-[1.5rem_1fr] w-full gap-1 py-1 pl-1 pr-2 truncate transition duration-300 rounded-md cursor-pointer item s-center hover:bg-background-300"
+            class="grid grid-cols-[1.5rem_1fr] w-full gap-1 py-1 pl-1 pr-2 truncate transition duration-300 rounded-md cursor-pointer item s-center hover:bg-background-variant-light-1"
           >
             <span class="text-2xl material-symbols-outlined">
               @if(selectedOption() === option) { done }
@@ -86,9 +82,9 @@
           </div>
 
           @if(canRemoveOption()) {
-          <div (click)="emitDeleteOption(option)">
+          <div (click)="emitDeleteOption(option)" title="Remover">
             <span
-              class="w-6 h-8 text-2xl transition-all rounded-md cursor-pointer material-symbols-outlined text-danger-500 hover:bg-danger-500/20"
+              class="w-6 h-8 text-2xl transition-all rounded-md cursor-pointer material-symbols-outlined icon-bold text-feedback-error hover:bg-feedback-error/30"
             >
               close
             </span>

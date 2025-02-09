@@ -3,3 +3,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     display: none;
     -webkit-appearance: none;
 }
+
+input[type="date"]::-webkit-input-placeholder {
+    visibility: hidden !important;
+}

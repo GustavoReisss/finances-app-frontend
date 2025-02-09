@@ -1,20 +1,31 @@
-<div class="h-full grid grid-rows-[auto_1fr]">
-  <header class="pb-2 border-b border-text-500/20">
-    <h1 class="text-2xl font-bold">Nova Despesa</h1>
-    <!-- <p>
-    Esqueça as preocupações com custos futuros! Registre seus gastos sem
-    esforço. Simplifique sua vida agora!
-  </p> -->
+<div class="relative h-full grid grid-rows-[auto_1fr] pb-5 px-3 lg:px-6">
+  <header
+    class="sticky top-0 left-0 z-10 pb-2 border-b pt-7 bg-background-variant-light-1 border-text-body-1/20"
+  >
+    <div class="flex flex-wrap items-end justify-between gap-x-8">
+      <h1 class="text-2xl font-bold">Nova Despesa</h1>
+
+      <div class="flex items-end justify-end flex-grow gap-2 pt-2">
+        <button
+          class="w-full font-bold h-min sm:max-w-64"
+          [disabled]="despesaForm.invalid"
+          appButton
+          (click)="save()"
+        >
+          Cadastrar Despesa
+        </button>
+      </div>
+    </div>
   </header>
 
   <form [formGroup]="despesaForm" class="container w-full mb-5">
-    <div class="py-4 border-b border-primary-700">
-      <h2 class="pb-2 text-lg font-bold text-primary-500">
+    <div class="py-4 border-b border-text-body-1/20">
+      <h2 class="pb-2 text-lg font-extrabold text-primary-base">
         Informações Gerais
       </h2>
       <div class="flex flex-wrap flex-grow gap-4">
-        <label class="flex-grow max-w-xl">
-          Descrição
+        <label class="flex-grow">
+          Descrição <span class="text-sm text-feedback-error">*</span>
           <input
             appInput
             class="w-full"
@@ -24,27 +35,35 @@
           />
         </label>
 
-        <label class="flex-grow max-w-xl">
-          Valor
+        <label class="flex-grow max-w-80">
+          Valor <span class="text-sm text-feedback-error">*</span>
           <input
             appInput
             class="w-full"
-            type="number"
             placeholder="Valor"
             formControlName="valor"
+            currencyMask
+            [options]="{
+              prefix: 'R$ ',
+              thousands: '.',
+              decimal: ',',
+              align: 'left'
+            }"
           />
         </label>
       </div>
     </div>
 
     <div
-      class="py-4 border-b border-primary-700"
+      class="py-4 border-b border-text-body-1/20"
       [class.border-b]="tipoPagamentoSelecionado()"
     >
-      <h2 class="pb-2 text-lg font-bold text-primary-500">Tipo de Despesa</h2>
+      <h2 class="pb-2 text-lg font-extrabold text-primary-base">
+        Tipo de Despesa <span class="text-sm text-feedback-error">*</span>
+      </h2>
 
       <div class="grid gap-3">
-        <div class="flex gap-5">
+        <div class="flex flex-wrap gap-x-4 gap-y-2">
           @for(tipo of tipoPagamentoOptions; track $index) {
           <label class="inline-flex items-center gap-2">
             <app-checkbox
@@ -59,8 +78,10 @@
         <div class="max-w-xl">
           <label>
             <span [class.opacity-50]="!tipoPagamentoSelecionado()"
-              >Categoria Pagamento</span
+              >Categoria Pagamento
+              <span class="text-sm text-feedback-error">*</span></span
             >
+
             <app-combobox
               [options]="categoriasPagamentosDisponiveis()"
               formControlName="categoriaPagamento"
@@ -75,253 +96,46 @@
     </div>
 
     @if(tipoPagamentoSelecionado() === 'Recorrente') {
-    <div class="py-4 border-b border-primary-700">
-      <h2 class="pb-2 text-lg font-bold text-primary-500">
-        Frequência de Pagamento
-      </h2>
-
-      <div class="flex gap-5">
-        @for(frequencia of frequenciasOptions; track $index) {
-        <label class="inline-flex items-center gap-2">
-          <app-checkbox
-            (valueChange)="handleFrequenciaValueChange(frequencia)"
-            [checked]="frequenciaSelecionada() === frequencia"
-          ></app-checkbox>
-          {{ frequencia }}
-        </label>
-        }
-      </div>
-
-      <ng-container formGroupName="detalhesFrequencia">
-        @if(frequenciaSelecionada() === "Mensal") {
-
-        <div class="pt-3 max-w-60">
-          <label>
-            Dia Pagamento
-            <input
-              appInput
-              class="w-full"
-              type="number"
-              max="31"
-              min="1"
-              placeholder="Dia"
-              formControlName="diaPagamento"
-            />
-          </label>
-        </div>
-
-        } @else if (frequenciaSelecionada() === "Semanal") {
-        <div class="pt-2 max-w-60">
-          <label>
-            Dia da Semana
-            <app-combobox
-              [options]="daysOptions"
-              labelKey="label"
-              valueKey="value"
-              formControlName="diaSemana"
-            ></app-combobox>
-          </label>
-        </div>
-
-        } @else if (frequenciaSelecionada() === "Outro") {
-
-        <div class="grid gap-4 pt-3">
-          <div class="flex flex-wrap items-end justify-start gap-4">
-            <label class="flex-grow max-w-32">
-              <p>A cada</p>
-              <input
-                appInput
-                type="number"
-                min="1"
-                placeholder="1, 2, 3..."
-                formControlName="quantidade"
-                (ngModelChange)="updateMinDate()"
-              />
-            </label>
-
-            <label class="flex-grow max-w-60">
-              <app-combobox
-                [options]="['Dias', 'Semanas', 'Meses', 'Anos']"
-                placeholder="Dia(s), Semana(s), Mês(es) ou Ano(s)"
-                formControlName="unidade"
-                (ngModelChange)="updateMinDate()"
-              ></app-combobox>
-            </label>
-          </div>
-
-          <div [formGroup]="despesaForm" class="max-w-96">
-            <label>
-              <span
-                [class.opacity-70]="
-                  despesaForm.get('ultimoPagamento')?.disabled
-                "
-              >
-                Contabilizar despesa a partir de
-              </span>
-
-              <app-date-picker
-                [min]="minDate"
-                [max]="maxDate"
-                formControlName="ultimoPagamento"
-              ></app-date-picker>
-              @if (minDate) {
-              <p class="pt-1 text-xs font-bold">
-                Data Mínima: {{ minDate | date : "dd/MM/YYYY" }}
-              </p>
-              }
-            </label>
-          </div>
-        </div>
-
-        }
-      </ng-container>
-    </div>
+    <app-frequencia-form [despesaForm]="despesaForm"></app-frequencia-form>
 
     } @else if (tipoPagamentoSelecionado() === 'Parcelado') {
-    <div class="py-4 border-b border-primary-700">
-      <h2 class="pb-2 text-lg font-bold text-primary-500">Parcelas</h2>
+    <div class="py-4 border-b border-text-body-1/20">
+      <h2 class="pb-2 text-lg font-bold text-primary-base">Parcelas</h2>
 
-      <div class="grid max-w-full grid-cols-2 gap-5 w-max">
-        <div>
-          <label>
-            <p>Quantidade de Parcelas</p>
-            <input
-              appInput
-              class="max-w-60"
-              type="number"
-              min="1"
-              placeholder="Quantidade"
-              formControlName="quantidadeParcelas"
-            />
-          </label>
-        </div>
-
-        <div>
-          <label>
-            <p>Parcela Atual</p>
-            <input
-              appInput
-              class="max-w-60"
-              type="number"
-              min="1"
-              placeholder="Parcela"
-              formControlName="parcelaAtual"
-            />
-          </label>
-        </div>
-      </div>
-    </div>
-
-    <div class="py-4 border-b border-primary-700">
-      <h2 class="pb-2 text-lg font-bold text-primary-500">
-        Frequência de Pagamento
-      </h2>
-
-      <div class="flex gap-5">
-        @for(frequencia of frequenciasOptions; track $index) {
-        <label
-          class="inline-flex items-center gap-2"
-          [class.text-danger-500]="
-            despesaForm.get('frequencia')?.invalid &&
-            despesaForm.get('frequencia')?.touched
-          "
-        >
-          <app-checkbox
-            (valueChange)="handleFrequenciaValueChange(frequencia)"
-            [checked]="frequenciaSelecionada() === frequencia"
-          ></app-checkbox>
-          {{ frequencia }}
+      <div class="grid max-w-full gap-3 sm:grid-cols-2 sm:max-w-xl">
+        <label>
+          <p>Total <span class="text-sm text-feedback-error">*</span></p>
+          <input
+            appInput
+            class=""
+            type="number"
+            min="1"
+            placeholder="Quantidade Total"
+            formControlName="quantidadeParcelas"
+          />
         </label>
-        }
+
+        <label>
+          <p>Atual <span class="text-sm text-feedback-error">*</span></p>
+          <input
+            appInput
+            class=""
+            type="number"
+            min="1"
+            placeholder="Parcela"
+            formControlName="parcelaAtual"
+          />
+        </label>
       </div>
-
-      <ng-container formGroupName="detalhesFrequencia">
-        @if(frequenciaSelecionada() === "Mensal") {
-
-        <div class="pt-3 max-w-60">
-          <label>
-            Dia Pagamento
-            <input
-              appInput
-              class="w-full"
-              type="number"
-              max="31"
-              min="1"
-              placeholder="Dia"
-              formControlName="diaPagamento"
-            />
-          </label>
-        </div>
-
-        } @else if (frequenciaSelecionada() === "Semanal") {
-        <div class="pt-2 max-w-60">
-          <label>
-            Dia da Semana
-            <app-combobox
-              [options]="daysOptions"
-              labelKey="label"
-              valueKey="value"
-              formControlName="diaSemana"
-            ></app-combobox>
-          </label>
-        </div>
-
-        } @else if (frequenciaSelecionada() === "Outro") {
-
-        <div class="grid gap-4 pt-3">
-          <div class="flex flex-wrap items-end justify-start gap-4">
-            <label class="max-w-32">
-              <p>A cada</p>
-              <input
-                appInput
-                type="number"
-                min="1"
-                placeholder="1, 2, 3..."
-                formControlName="quantidade"
-                (ngModelChange)="updateMinDate()"
-              />
-            </label>
-            <label class="flex-grow max-w-60">
-              <app-combobox
-                [options]="['Dias', 'Semanas', 'Meses', 'Anos']"
-                placeholder="Dia(s), Semana(s), Mês(es) ou Ano(s)"
-                formControlName="unidade"
-                (ngModelChange)="updateMinDate()"
-              ></app-combobox>
-            </label>
-          </div>
-
-          <div [formGroup]="despesaForm" class="max-w-96">
-            <label>
-              <span
-                [class.opacity-70]="
-                  despesaForm.get('ultimoPagamento')?.disabled
-                "
-              >
-                Data da Parcela Atual
-              </span>
-
-              <app-date-picker
-                [min]="minDate"
-                [max]="maxDate"
-                formControlName="ultimoPagamento"
-              ></app-date-picker>
-              @if (minDate) {
-              <p class="pt-1 text-xs font-bold">
-                Data Mínima: {{ minDate | date : "dd/MM/YYYY" }}
-              </p>
-              }
-            </label>
-          </div>
-        </div>
-
-        }
-      </ng-container>
     </div>
+
+    <app-frequencia-form [despesaForm]="despesaForm"></app-frequencia-form>
 
     } @else if (tipoPagamentoSelecionado() === 'À Vista') {
-    <div class="py-4 border-b border-primary-700">
-      <h2 class="pb-2 text-lg font-bold text-primary-500">Data da Pagamento</h2>
+    <div class="py-4 border-b border-text-body-1/20">
+      <h2 class="pb-2 text-lg font-bold text-primary-base">
+        Data do Pagamento
+      </h2>
 
       <div class="max-w-96">
         <app-date-picker
@@ -338,20 +152,10 @@
     </div>
     }
   </form>
-
-  <div class="flex gap-2">
-    <!-- <button appButton color="danger" class="w-28" (click)="clearForm()">
-    Limpar
-  </button> -->
-    <button appButton class="w-full font-bold" (click)="save()">
-      Cadastrar Despesa
-    </button>
-  </div>
+  <!-- <pre>
+    {{ despesaForm.value | json }}
+  </pre> -->
 </div>
-
-<!-- <pre>
-  {{ despesaForm.value | json }}
-</pre> -->
 
 <app-modal
   class="rounded-md"

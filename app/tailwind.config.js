@@ -8,49 +8,46 @@ module.exports = {
     extend: {},
     colors: {
       // Background
-      "background-300": "hsla(var(--background-300) / <alpha-value>)",
-      "background-400": "hsla(var(--background-400) / <alpha-value>)",
-      "background-500": "hsla(var(--background-500) / <alpha-value>)",
-      "background-600": "hsla(var(--background-600) / <alpha-value>)",
+      "background-base": "hsla(var(--background-base) / <alpha-value>)",
+      "background-variant-dark-1": "hsla(var(--background-variant-dark-1) / <alpha-value>)",
+      "background-variant-light-2": "hsla(var(--background-variant-light-2) / <alpha-value>)",
+      "background-variant-light-1": "hsla(var(--background-variant-light-1) / <alpha-value>)",
 
       // Text
-      "text-300": "hsla(var(--text-300) / <alpha-value>)",
-      "text-400": "hsla(var(--text-400) / <alpha-value>)",
-      "text-500": "hsla(var(--text-500) / <alpha-value>)",
-      "text-600": "hsla(var(--text-600) / <alpha-value>)",
-      "text-700": "hsla(var(--text-700) / <alpha-value>)",
+      "text-body-1": "hsla(var(--text-body-1) / <alpha-value>)",
+      "text-body-2": "hsla(var(--text-body-2) / <alpha-value>)",
 
       // Primary
-      "primary-300": "hsla(var(--primary-300) / <alpha-value>)",
-      "primary-400": "hsla(var(--primary-400) / <alpha-value>)",
-      "primary-500": "hsla(var(--primary-500) / <alpha-value>)",
-      "primary-600": "hsla(var(--primary-600) / <alpha-value>)",
-      "primary-700": "hsla(var(--primary-700) / <alpha-value>)",
+      "primary-base": "hsla(var(--primary-base) / <alpha-value>)",
+      "primary-base-contrast": "hsla(var(--primary-base-contrast) / <alpha-value>)",
+      "primary-variant-1": "hsla(var(--primary-variant-1) / <alpha-value>)",
+      "primary-variant-1-contrast": "hsla(var(--primary-variant-1-contrast) / <alpha-value>)",
       
       // Secondary
-      "secondary-300": "hsla(var(--secondary-300) / <alpha-value>)",
-      "secondary-400": "hsla(var(--secondary-400) / <alpha-value>)",
-      "secondary-500": "hsla(var(--secondary-500) / <alpha-value>)",
-      "secondary-600": "hsla(var(--secondary-600) / <alpha-value>)",
-      "secondary-700": "hsla(var(--secondary-700) / <alpha-value>)",
+      "secondary-base": "hsla(var(--secondary-base) / <alpha-value>)",
+      "secondary-base-contrast": "hsla(var(--secondary-base-contrast) / <alpha-value>)",
+      "secondary-variant-1": "hsla(var(--secondary-variant-1) / <alpha-value>)",
+      "secondary-variant-1-contrast": "hsla(var(--secondary-variant-1-contrast) / <alpha-value>)",
+
 
       // Accent
-      "accent-300": "hsla(var(--accent-300) / <alpha-value>)",
-      "accent-400": "hsla(var(--accent-400) / <alpha-value>)",
-      "accent-500": "hsla(var(--accent-500) / <alpha-value>)",
-      "accent-600": "hsla(var(--accent-600) / <alpha-value>)",
-      "accent-700": "hsla(var(--accent-700) / <alpha-value>)",
+      "accent-base": "hsla(var(--accent-base) / <alpha-value>)",
+      "accent-base-contrast": "hsla(var(--accent-base-contrast) / <alpha-value>)",
+      "accent-variant-1": "hsla(var(--accent-variant-1) / <alpha-value>)",
+      "accent-variant-1-contrast": "hsla(var(--accent-variant-1-contrast) / <alpha-value>)",
 
-      // Cancel
-      "cancel-500": "hsla(var(--cancel-500) / <alpha-value>)",
+      //Feedback
+      "feedback-success": "hsla(var(--feedback-success) / <alpha-value>)",
+      "feedback-success-contrast": "hsla(var(--feedback-success-contrast) / <alpha-value>)",
 
-      // White
-      "white-500": "hsla(var(--white-500) / <alpha-value>)",
-      "white-600": "hsla(var(--white-600) / <alpha-value>)",
-      "white-700": "hsla(var(--white-700) / <alpha-value>)",
+      "feedback-error": "hsla(var(--feedback-error) / <alpha-value>)",
+      "feedback-error-contrast": "hsla(var(--feedback-error-contrast) / <alpha-value>)",
 
-      // Danger
-      "danger-500": "hsla(var(--danger-500) / <alpha-value>)"
+      "feedback-warning": "hsla(var(--feedback-warning) / <alpha-value>)",
+      "feedback-warning-contrast": "hsla(var(--feedback-warning-contrast) / <alpha-value>)",
+
+      "feedback-info": "hsla(var(--feedback-info) / <alpha-value>)",
+      "feedback-info-contrast": "hsla(var(--feedback-info-contrast) / <alpha-value>)",
     }
   },
   plugins: [
