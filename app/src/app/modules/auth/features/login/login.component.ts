@@ -5,6 +5,7 @@ import { InputDirective } from '../../../../shared/directives/input/input.direct
 import { ButtonDirective } from '../../../../shared/directives/button/button.directive';
 import { Router, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
+import { DashboardService } from '../../../dashboard/service/dashboard.service';
 
 const INTERNAL_SERVER_ERROR = "Um erro desconhecido aconteceu, tente novamente em breve!"
 
@@ -17,6 +18,7 @@ const INTERNAL_SERVER_ERROR = "Um erro desconhecido aconteceu, tente novamente e
 })
 export class LoginComponent {
   httpService = inject(HttpService)
+  dashboardService = inject(DashboardService)
   fb = inject(FormBuilder)
   router = inject(Router)
 
@@ -44,7 +46,10 @@ export class LoginComponent {
         finalize(() => this.loading.set(false))
       )
       .subscribe({
-        next: (v) => this.router.navigate(["/"]),
+        next: (v) => {
+          this.dashboardService.fetchData()
+          this.router.navigate(["/"])
+        },
         error: (e) =>
           this.errorMessage.set(e.error["error_message"] || INTERNAL_SERVER_ERROR)
       })

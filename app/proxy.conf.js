@@ -1,7 +1,7 @@
 
 const PROXY_CONFIG = [
     {
-        "enabled": false,
+        "enabled": true,
         "context": ["/api_proxy/despesas_futuras"],
         "target": "https://d28jtj2wwws6wz.cloudfront.net/api",
         "secure": false,
@@ -23,7 +23,7 @@ const PROXY_CONFIG = [
         }
     },
     {
-        "enabled": false,
+        "enabled": true,
         "context": [
             "/api_proxy/despesas",
             "/api_proxy/extrato_despesas",

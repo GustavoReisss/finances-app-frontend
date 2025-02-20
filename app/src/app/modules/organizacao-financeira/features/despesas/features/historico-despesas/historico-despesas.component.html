@@ -10,7 +10,26 @@
   </p>
   <h1 class="text-2xl font-bold">Histórico de Despesas</h1>
 
-  <h2 class="font-light">Aqui você encontra o histórico das suas despesas!</h2>
+  <h2 class="mt-2 text-sm text-text-body-2">
+    <span class="font-bold"
+      >O histórico contabiliza as despesas um dia após a data de pagamento</span
+    >
+  </h2>
+
+  <div class="flex flex-col items-start gap-1 mt-2">
+    <p class="text-sm text-text-body-2">Esqueceu de adicionar uma despesa?</p>
+
+    <button
+      class="flex items-center text-sm transition-all rounded-md ps-1 pe-2 text-accent-variant-1-contrast bg-accent-variant-1 hover:bg-accent-variant-1/80"
+      (click)="modalAddHistoricoDespesa.set(true)"
+      title="Adicionar Despesa Passada"
+    >
+      <span class="scale-75 material-symbols-outlined pe-1"
+        >note_stack_add</span
+      >
+      Adicione agora
+    </button>
+  </div>
 
   <div class="flex justify-end my-4">
     <label>
@@ -36,7 +55,17 @@
     </div>
 
     @for (historico of extratoDespesas()[date]; track $index) {
-    <div class="grid grid-cols-[auto_1fr_auto] gap-3 mb-3">
+    <div class="grid grid-cols-[auto_auto_1fr_auto] gap-3 mb-3">
+      <div
+        class="flex items-center transition-all rounded-md hover:bg-feedback-error/25"
+        (click)="deleteHistoricoDespesa(historico)"
+      >
+        <span
+          class="scale-90 cursor-pointer material-symbols-outlined lg:scale-100 text-feedback-error"
+          >delete</span
+        >
+      </div>
+
       <div
         class="grid w-12 h-12 rounded-md shadow-md bg-background-variant-light-1 place-items-center"
       >
@@ -52,8 +81,46 @@
       </div>
 
       <div class="flex items-center">
-        <p class="text-sm font-medium text-feedback-error">
-          - {{ historico.valor | currency : "BRL" }}
+        <p class="flex items-center justify-end text-sm font-medium">
+          <input
+            [(ngModel)]="historico.valor"
+            [readonly]="!historico.editing"
+            currencyMask
+            [options]="{
+              prefix: 'R$ ',
+              thousands: '.',
+              decimal: ',',
+              align: 'right'
+            }"
+            [title]="historico.valor | currency : 'BRL'"
+            class="px-1 border rounded-md shadow-md outline-none read-only:focus-within:ring-0 focus-within:ring-2 ring-text-body-2/20 text-text-body-2 read-only:text-feedback-error max-w-28 border-text-body-1/20 read-only:border-0 bg-background-base"
+          />
+
+          @if(!historico.loading) {
+          <span
+            class="scale-[0.8] icon-bold cursor-pointer material-symbols-outlined text-feedback-error transition-all rounded-md p-1 {{
+              historico.editing
+                ? 'text-feedback-success hover:bg-feedback-success/25'
+                : 'text-feedback-error hover:bg-feedback-error/25'
+            }}"
+            (click)="
+              !historico.editing
+                ? (historico.editing = true)
+                : saveHistoricoDespesa(historico)
+            "
+          >
+            {{ historico.editing ? "check" : "edit" }}
+          </span>
+
+          } @else {
+          <span class="animate-spin">
+            <span
+              class="scale-[0.8] icon-bold cursor-pointer material-symbols-outlined text-feedback-info transition-all rounded-md p-1"
+            >
+              progress_activity
+            </span>
+          </span>
+          }
         </p>
       </div>
     </div>
@@ -71,3 +138,27 @@
   </div>
   }
 </div>
+
+@if (modalDeleteHistoricoDespesa()) {
+<app-modal
+  class="rounded-md"
+  [open]="modalDeleteHistoricoDespesa()"
+  (close)="modalDeleteHistoricoDespesa.set(false)"
+>
+  <app-delete-historico-despesa-alert
+    [historicoDespesa]="historicoToDelete()!"
+    (optionDeleted)="handleHistoricoDespesaDeleted()"
+  ></app-delete-historico-despesa-alert>
+</app-modal>
+
+} @if (modalAddHistoricoDespesa()) {
+<app-modal
+  class="rounded-md w-[96vw] max-w-2xl md:w-[90vw]"
+  [open]="modalAddHistoricoDespesa()"
+  (close)="modalAddHistoricoDespesa.set(false)"
+>
+  <app-add-despesa-passada
+    (despesaPassadaCreated)="handleDespesaPassadaCreated($event)"
+  ></app-add-despesa-passada>
+</app-modal>
+}

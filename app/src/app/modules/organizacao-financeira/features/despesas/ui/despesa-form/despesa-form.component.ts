@@ -1,5 +1,5 @@
 import { Component, EventEmitter, OnInit, Output, computed, inject, signal } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CheckboxComponent } from '../../../../../../shared/components/checkbox/checkbox.component';
 import { ComboboxComponent, ComboboxOption } from '../../../../../../shared/components/combobox/combobox.component';
 import { InputDirective } from '../../../../../../shared/directives/input/input.directive';
@@ -8,7 +8,7 @@ import { HttpService } from '../../../../../../shared/services/http/http.service
 import { TipoPagamento } from '../../../../../../shared/interfaces/tipo-pagamento.interface';
 import { Despesa } from '../../../../../../shared/interfaces/despesa.interface';
 import { DespesaService } from '../../services/despesa-service/despesa-form.service';
-import { DatePipe, JsonPipe } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { ModalComponent } from '../../../../../../shared/components/modal/modal.component';
 import { RemoveOptionComponent } from './ui/remove-option/remove-option.component';
 import { AddCategoriaPagamentoComponent } from './ui/add-categoria-pagamento/add-categoria-pagamento.component';
@@ -16,6 +16,7 @@ import { DatePickerComponent } from '../../../../../../shared/components/date-pi
 import { addControls, removeControls, tipoPagamento, TODAY } from '../../shared/despesa-form.utils';
 import { FrequenciaFormComponent } from '../forms/frequencia-form/frequencia-form.component';
 import { NgxCurrencyDirective } from 'ngx-currency';
+import { markAsDirtAndTouched } from '../../../../../../shared/utils/form';
 
 export type OptionsToDelete = "categoriaPagamento"
 
@@ -29,7 +30,6 @@ export type OptionsToDelete = "categoriaPagamento"
     ButtonDirective,
     FormsModule,
     ReactiveFormsModule,
-    JsonPipe,
     ModalComponent,
     RemoveOptionComponent,
     AddCategoriaPagamentoComponent,
@@ -195,18 +195,6 @@ export class DespesaFormComponent implements OnInit {
 
   /* FORM SUBMIT */
   save() {
-    const markAsDirtAndTouched = (fg: FormGroup) => {
-      for (let control of Object.values(fg.controls)) {
-        if (control instanceof FormGroup) {
-          markAsDirtAndTouched(control)
-          continue
-        }
-
-        control.markAsDirty()
-        control.markAllAsTouched()
-      }
-    }
-
     markAsDirtAndTouched(this.despesaForm)
 
     if (this.despesaForm.invalid) {

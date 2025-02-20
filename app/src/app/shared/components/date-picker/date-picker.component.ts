@@ -24,6 +24,9 @@ const INVALID_DATE = 'Invalid Date'
   imports: [OverlayModule, FormsModule, NgClass],
   templateUrl: './date-picker.component.html',
   styleUrl: './date-picker.component.scss',
+  host: {
+    'class': "group"
+  },
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
@@ -47,6 +50,8 @@ export class DatePickerComponent implements ControlValueAccessor {
 
   isOpen = signal(false)
   disabled = signal(false)
+
+  title = input<string>("dd/mm/aaaa")
 
   @Input({ alias: 'disabled' })
   set _disabled(disabledState: boolean) {

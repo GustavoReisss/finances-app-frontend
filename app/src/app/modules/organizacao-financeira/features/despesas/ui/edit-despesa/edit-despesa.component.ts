@@ -16,6 +16,7 @@ import { daysOptions, tipoPagamento, TODAY } from '../../shared/despesa-form.uti
 import { Subscription } from 'rxjs';
 import { FrequenciaFormComponent } from '../forms/frequencia-form/frequencia-form.component';
 import { NgxCurrencyDirective } from 'ngx-currency';
+import { markAsDirtAndTouched } from '../../../../../../shared/utils/form';
 
 @Component({
   selector: 'app-edit-despesa',
@@ -151,6 +152,8 @@ export class EditDespesaComponent {
   }
 
   salvar() {
+    markAsDirtAndTouched(this.despesaForm)
+
     if (this.despesaForm.invalid) return
 
     this.despesaService.updateDespesa(this.despesaForm.value, this.despesa().despesaId!)

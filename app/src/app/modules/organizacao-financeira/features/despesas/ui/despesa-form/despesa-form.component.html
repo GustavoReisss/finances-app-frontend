@@ -8,7 +8,6 @@
       <div class="flex items-end justify-end flex-grow gap-2 pt-2">
         <button
           class="w-full font-bold h-min sm:max-w-64"
-          [disabled]="despesaForm.invalid"
           appButton
           (click)="save()"
         >
@@ -75,7 +74,7 @@
           }
         </div>
 
-        <div class="max-w-xl">
+        <div class="max-w-full">
           <label>
             <span [class.opacity-50]="!tipoPagamentoSelecionado()"
               >Categoria Pagamento
@@ -102,7 +101,7 @@
     <div class="py-4 border-b border-text-body-1/20">
       <h2 class="pb-2 text-lg font-bold text-primary-base">Parcelas</h2>
 
-      <div class="grid max-w-full gap-3 sm:grid-cols-2 sm:max-w-xl">
+      <div class="grid max-w-full grid-cols-2 gap-3">
         <label>
           <p>Total <span class="text-sm text-feedback-error">*</span></p>
           <input

@@ -1,9 +1,9 @@
-import { CurrencyPipe } from '@angular/common';
+import { CurrencyPipe, DatePipe } from '@angular/common';
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { HttpService } from '../../../../shared/services/http/http.service';
 import { Despesa } from '../../../../shared/interfaces/despesa.interface';
 import { DespesaFormComponent } from './ui/despesa-form/despesa-form.component';
-import { delay, finalize, map } from 'rxjs';
+import { delay, finalize, forkJoin, map } from 'rxjs';
 import { SkeletonLoaderComponent } from '../../../../shared/components/skeleton-loader/skeleton-loader.component';
 import { TabsComponent } from '../../../../shared/components/tabs/tabs.component';
 import { FormsModule } from '@angular/forms';
@@ -11,17 +11,18 @@ import { ModalComponent } from '../../../../shared/components/modal/modal.compon
 import { ButtonDirective } from '../../../../shared/directives/button/button.directive';
 import { DeleteDespesaAlertComponent } from './ui/delete-despesa-alert/delete-despesa-alert.component';
 import { EditDespesaComponent } from './ui/edit-despesa/edit-despesa.component';
-import { daysOptions } from './shared/despesa-form.utils';
 import { RouterLink } from '@angular/router';
+import { createTags, HistoricoDespesa, HistoricoDespesaEditable, Tag } from './utils';
+import { DeleteHistoricoDespesaAlertComponent } from './ui/delete-historico-despesa-alert/delete-historico-despesa-alert.component';
+import { AddDespesaPassadaComponent } from './ui/add-despesa-passada/add-despesa-passada.component';
+import { SelectComponent } from '../../../../shared/components/select/select.component';
+import { NgxCurrencyDirective } from 'ngx-currency';
 
 type DespesaComTag = Despesa & { tags: Tag[] }
 type OrderBy = "descricao" | "valor"
 type OrderDirection = -1 | 1 // asc || desc
 
-interface Tag {
-  type: string
-  value: string
-}
+
 
 @Component({
   selector: 'app-despesas',
@@ -36,7 +37,12 @@ interface Tag {
     ButtonDirective,
     DeleteDespesaAlertComponent,
     EditDespesaComponent,
-    RouterLink
+    RouterLink,
+    DatePipe,
+    DeleteHistoricoDespesaAlertComponent,
+    AddDespesaPassadaComponent,
+    SelectComponent,
+    NgxCurrencyDirective
   ],
   templateUrl: './despesas.component.html',
   styleUrl: './despesas.component.scss'
@@ -53,19 +59,27 @@ export class DespesasComponent implements OnInit {
 
   tabSelecionada = signal(this.tabsTipoPagamentos[0])
 
-  fetchingDespesas = signal(false)
+  fetchingData = signal(false)
 
   modalCadastroDespesa = signal(false)
   modalDeleteDespesa = signal(false)
   modalEditDespesa = signal(false)
+  modalDeleteHistoricoDespesa = signal(false)
+  modalAddHistoricoDespesa = signal(false)
 
   orderBy = signal<OrderBy>("descricao")
   orderDirection = signal<OrderDirection>(1)
 
   despesas = signal<DespesaComTag[]>([])
+  historicoDespesas = signal<{
+    [key: string]: HistoricoDespesaEditable[]
+  }>({})
+  quantidadeHistorico = signal(7)
 
   despesaToDelete = signal<Partial<Despesa>>({})
   despesaToEdit = signal<Partial<Despesa>>({})
+
+  historicoToDelete = signal<HistoricoDespesa | null>(null)
 
   despesasFiltradas = computed<DespesaComTag[]>(() => {
     let orderedDespesas = [...this.despesas().sort((despesaA, despesaB) => {
@@ -91,114 +105,57 @@ export class DespesasComponent implements OnInit {
     }
   })
 
+  availableDates = computed(
+    () => Object.keys(this.historicoDespesas()).sort(
+      (a, b) => new Date(b).getTime() - new Date(a).getTime()
+    )
+  )
+
   ngOnInit() {
-    this.fetchDespesas()
+    this.fetchData()
   }
 
   parseDespesaToDespesaComTag(despesa: Despesa) {
     return {
       ...despesa,
       valor: Number(despesa['valor']),
-      tags: this.createTags(despesa)
+      tags: createTags(despesa)
     } as DespesaComTag
   }
 
-  fetchDespesas() {
-    this.fetchingDespesas.set(true)
-    this.httpService.get<Despesa[]>("despesas")
+  fetchData() {
+    this.fetchingData.set(true)
+
+    forkJoin([
+      this.httpService.get<Despesa[]>("despesas"),
+      this.httpService.get<HistoricoDespesa[]>("extrato_despesas", { 'order': 'desc' })
+    ])
       .pipe(
         // delay(1000),
-        map(res =>
-          res.map(el => this.parseDespesaToDespesaComTag(el))
-        ),
-        finalize(() => this.fetchingDespesas.set(false))
+        map(res => {
+          res[0] = res[0].map(el => this.parseDespesaToDespesaComTag(el))
+          res[1] = res[1].slice(0, this.quantidadeHistorico())
+          return res as [DespesaComTag[], HistoricoDespesa[]]
+        }),
+        finalize(() => this.fetchingData.set(false))
       )
-      .subscribe(res => { this.despesas.set(res); console.log(res) })
-  }
+      .subscribe(res => {
+        this.despesas.set(res[0])
 
-  createTags(despesa: Despesa): Tag[] {
-    let extraTags: Tag[] = []
+        let historico: {
+          [key: string]: HistoricoDespesaEditable[]
+        } = {}
 
-    if (despesa.tipoPagamento == 'À Vista') {
-      const dataPagamento = new Date(despesa.dataProximoPagamento!)
-      dataPagamento.setHours(dataPagamento.getHours() + 3)
-
-      extraTags.push({
-        type: "Frequencia",
-        value: `Pagamento dia ${dataPagamento.toLocaleDateString('pt-br')}`
-      })
-    }
-    else {
-      if (despesa.tipoPagamento == 'Parcelado') {
-        extraTags.push({
-          type: "Parcelas",
-          value: `${despesa.parcelaAtual}/${despesa.quantidadeParcelas}`
-        })
-      }
-
-      switch (despesa.frequencia) {
-        case "Mensal":
-          extraTags.push({
-            type: "Frequencia",
-            value: `Todo dia ${despesa.detalhesFrequencia?.diaPagamento}`
-          })
-          break
-        case "Semanal":
-          const diaSemana = daysOptions.find(el => el.value === despesa.detalhesFrequencia!.diaSemana)
-          if (!diaSemana) break
-
-          if (["5", "6"].includes(diaSemana.value)) { // Sábado e Domingo
-            extraTags.push({
-              type: "Frequencia",
-              value: `Todo ${diaSemana.label.toLowerCase()}`
-            })
-            break
+        for (let extrato of res[1]) {
+          if (!historico[extrato.dataPagamento]) {
+            historico[extrato.dataPagamento] = []
           }
 
-          extraTags.push({
-            type: "Frequencia",
-            value: `Toda ${diaSemana.label.toLowerCase()}`
-          })
-          break
-        case "Outro":
-          let { quantidade, unidade } = despesa.detalhesFrequencia!
+          historico[extrato.dataPagamento].push({ ...extrato, editing: false, loading: false })
+        }
 
-          if (!quantidade || !unidade) break
-
-          if (quantidade === "1") {
-            unidade = { "Semanas": "Semana", "Anos": "Ano", "Meses": "Mês" }[unidade]
-          }
-
-          extraTags.push({
-            type: "Frequencia",
-            value: `A cada ${quantidade} ${unidade?.toLocaleLowerCase()}`
-          })
-          break
-      }
-    }
-
-    if (despesa.dataProximoPagamento && despesa.tipoPagamento !== 'À Vista') {
-      const dataPagamento = new Date(despesa.dataProximoPagamento!)
-      dataPagamento.setHours(dataPagamento.getHours() + 3)
-      // extraTags.push(`Próximo pagamento em ${dataPagamento.toLocaleDateString('pt-br')}`)
-      extraTags.push()
-      extraTags.push({
-        type: "proximoPagamento",
-        value: dataPagamento.toLocaleDateString('pt-br')
+        this.historicoDespesas.set(historico)
       })
-    }
-
-    return [
-      {
-        type: "tipoPagamento",
-        value: despesa.tipoPagamento
-      },
-      {
-        type: "categoriaPagamento",
-        value: despesa.categoriaPagamento
-      },
-      ...extraTags
-    ]
   }
 
   setOrder(order: OrderBy) {
@@ -213,10 +170,23 @@ export class DespesasComponent implements OnInit {
 
   handleDespesaCreated(despesa: Despesa) {
     this.despesas.update(despesas => {
-      despesas.push({ ...despesa, tags: this.createTags(despesa) })
+      despesas.push({ ...despesa, tags: createTags(despesa) })
       return [...despesas]
     })
     this.modalCadastroDespesa.set(false)
+  }
+
+  handleDespesaPassadaCreated(despesaPassada: HistoricoDespesa) {
+    this.historicoDespesas.update(historico => {
+      if (!historico[despesaPassada.dataPagamento]) {
+        historico[despesaPassada.dataPagamento] = []
+      }
+
+      historico[despesaPassada.dataPagamento].push({ ...despesaPassada, editing: false, loading: false })
+      return { ...historico }
+    })
+
+    this.modalAddHistoricoDespesa.set(false)
   }
 
   handleDespesaDeleted() {
@@ -229,9 +199,50 @@ export class DespesasComponent implements OnInit {
     this.modalDeleteDespesa.set(false)
   }
 
+  handleHistoricoDespesaDeleted() {
+    this.historicoDespesas.update(historico => {
+      const deletedHistoricoDespesaIndex = historico[this.historicoToDelete()?.dataPagamento!]
+        .findIndex(el => el.despesaId === this.historicoToDelete()!.despesaId)
+
+      historico[this.historicoToDelete()?.dataPagamento!].splice(deletedHistoricoDespesaIndex, 1)
+
+      if (historico[this.historicoToDelete()?.dataPagamento!].length === 0) {
+        delete historico[this.historicoToDelete()?.dataPagamento!]
+      }
+
+      return { ...historico }
+    })
+
+    this.modalDeleteHistoricoDespesa.set(false)
+  }
+
+  saveHistoricoDespesa(historicoDespesa: HistoricoDespesaEditable) {
+    if (historicoDespesa.loading) return
+
+    historicoDespesa.loading = true
+
+    this.httpService.put('extrato_despesas', historicoDespesa.despesaId, { valor: historicoDespesa.valor })
+      .pipe(
+        delay(100)
+      )
+      .subscribe({
+        next: _response => {
+          historicoDespesa.editing = false
+        },
+        complete: () => {
+          historicoDespesa.loading = false
+        }
+      })
+  }
+
   deleteDespesa(despesa: Despesa) {
     this.despesaToDelete.set(despesa)
     this.modalDeleteDespesa.set(true)
+  }
+
+  deleteHistoricoDespesa(historicoDespesa: HistoricoDespesa) {
+    this.historicoToDelete.set(historicoDespesa)
+    this.modalDeleteHistoricoDespesa.set(true)
   }
 
   editDespesa(despesa: Despesa) {
