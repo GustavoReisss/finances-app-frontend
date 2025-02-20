@@ -53,7 +53,7 @@ export function setDetalhesFrequenciaFields(form: FormGroup, frequencia: Frequen
         },
         'Outro': {
             "unidade": "",
-            "quantidade": ""
+            "quantidade": "",
         },
         "": {}
     }
@@ -63,6 +63,10 @@ export function setDetalhesFrequenciaFields(form: FormGroup, frequencia: Frequen
     if (!(detalhesFrequenciasFG instanceof FormGroup)) return
 
     removeAllControls(detalhesFrequenciasFG)
+
+    if (frequencia === "Outro") {
+        form.get("dataProximoPagamento")!.addValidators([Validators.required])
+    }
 
     addControls(
         detalhesFrequenciasFG,

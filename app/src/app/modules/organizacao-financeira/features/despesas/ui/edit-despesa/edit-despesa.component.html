@@ -76,9 +76,9 @@
     @if (tipoPagamento() === "Parcelado") {
     <h2 class="text-lg font-bold pb text-primary-base">Parcelas</h2>
     <div
-      class="flex flex-wrap max-w-full gap-3 pb-4 border-b border-text-body-1/20"
+      class="grid items-end max-w-full grid-cols-2 gap-3 pb-4 border-b border-text-body-1/20"
     >
-      <div class="flex-grow">
+      <div class="">
         <label>
           <p>Quantidade de Parcelas</p>
           <input
@@ -91,7 +91,7 @@
         </label>
       </div>
 
-      <div class="flex-grow">
+      <div class="">
         <label>
           <p>Parcela Atual</p>
           <input

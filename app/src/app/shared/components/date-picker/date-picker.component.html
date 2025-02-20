@@ -1,6 +1,8 @@
-<div class="w-[inherit]">
+<div
+  class="w-[inherit] group-[.ng-dirty.ng-touched.ng-invalid]:*:border-feedback-error/60 group-[.ng-dirty.ng-touched.ng-invalid]:*:text-feedback-error group-[.ng-dirty.ng-touched.ng-invalid]:*:ring-feedback-error/50"
+>
   <div
-    [title]="'placeholder'"
+    [title]="title()"
     class="flex items-center justify-between pl-4 pr-2 border rounded-md cursor-pointer border-text-body-2/20 bg-background-base/80 focus-within:ring-2 ring-text-body-2/25"
     [class.opacity-60]="disabled()"
     [class.focus-within:ring-0]="disabled()"

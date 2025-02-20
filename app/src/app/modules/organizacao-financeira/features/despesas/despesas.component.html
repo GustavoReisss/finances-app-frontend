@@ -1,151 +1,282 @@
-<div class="container pb-4">
-  <div class="flex justify-end">
-    <button
-      appButton
-      routerLink="historico"
-      color="secondary"
-      variant="outline"
+<div class="w-full lg:container grid grid-rows-[auto_1fr]">
+  <header>
+    <h1 class="text-2xl font-bold">Despesas</h1>
+    <h2>Aqui estão suas Despesas cadastradas:</h2>
+  </header>
+
+  <div
+    class="grid grid-cols-1 h-full gap-4 md:grid-cols-[55%_45%] lg:grid-cols-[60%_40%]"
+  >
+    <section
+      class="pb-8 border-b md:border-b-0 md:pb-0 md:border-r border-text-body-2/20 md:pe-2 lg:pe-4"
     >
-      Histórico
-    </button>
-  </div>
-
-  <h1 class="text-2xl font-bold">Despesas</h1>
-
-  <h2>Aqui estão suas Despesas cadastradas:</h2>
-
-  <app-tabs
-    class="mt-5 lg:w-max"
-    [tabs]="tabsTipoPagamentos"
-    [ngModel]="tabSelecionada()"
-    (ngModelChange)="tabSelecionada.set($event)"
-  ></app-tabs>
-
-  <div class="flex flex-wrap justify-end gap-2 pt-2 pb-6 mt-2">
-    <div
-      class="flex-grow py-1 text-center rounded-md shadow-lg max-w-48 bg-background-variant-light-1"
-    >
-      <h2 class="text-lg font-bold">Despesas</h2>
-      <p class="font-bold">{{ despesasInfo().quantidade }}</p>
-    </div>
-
-    <div
-      class="flex-grow py-1 text-center rounded-md shadow-lg max-w-48 bg-background-variant-light-1"
-    >
-      <h2 class="text-lg font-bold">Valor Total</h2>
-      <p class="font-bold">
-        {{ despesasInfo().valorTotal | currency : "BRL" }}
-      </p>
-    </div>
-  </div>
-
-  <div class="flex items-end justify-between gap-2 mt-3 mb-2">
-    <button
-      appButton
-      color="accent-variant"
-      (click)="modalCadastroDespesa.set(true)"
-    >
-      Nova Despesa
-    </button>
-
-    <div class="flex justify-end gap-2">
-      <div
-        class="flex items-center rounded-md shadow-xl cursor-pointer ps-3 bg-secondary-variant-1 text-secondary-base-contrast"
-        (click)="setOrder('descricao')"
-        [class.opacity-80]="orderBy() !== 'descricao'"
-      >
-        <span>Nome</span>
-        <span
-          class="transition-all min-w-3 material-symbols-outlined"
-          [class.rotate-180]="orderDirection() === -1"
-        >
-          @if (orderBy() === "descricao") { arrow_drop_up}
-        </span>
-      </div>
-
-      <div
-        class="flex items-center rounded-md cursor-pointer ps-3 bg-secondary-variant-1 text-secondary-base-contrast"
-        (click)="setOrder('valor')"
-        [class.opacity-80]="orderBy() !== 'valor'"
-      >
-        <span>Valor</span>
-
-        <span
-          class="transition-all min-w-3 material-symbols-outlined"
-          [class.rotate-180]="orderDirection() === -1"
-        >
-          @if (orderBy() === "valor") { arrow_drop_up }
-        </span>
-      </div>
-    </div>
-  </div>
-
-  <div class="relative grid w-full gap-4 mt-1 min-h-60">
-    <app-skeleton-loader [loading]="fetchingDespesas()"></app-skeleton-loader>
-
-    @for(despesa of despesasFiltradas(); track $index) {
-    <div
-      class="grid w-full gap-1 px-3 rounded-md shadow-lg h-max bg-background-variant-light-1"
-    >
-      <header
-        class="grid grid-cols-[1fr_auto] gap-2 grid-rows-1 pt-3 pb-1 border-b border-background-base"
-      >
-        <div>
-          <h1 class="break-all">
-            {{ despesa.descricao }}
-          </h1>
-          <h2 class="text-lg font-bold">
-            {{ despesa.valor | currency : "BRL" }}
-          </h2>
+      <div>
+        <div class="flex justify-end mt-4">
+          <label class="min-w-44">
+            <span class="text-text-body-1/80">Tipo de Despesa</span>
+            <app-select
+              [options]="tabsTipoPagamentos"
+              [ngModel]="tabSelecionada()"
+              (ngModelChange)="tabSelecionada.set($event)"
+            ></app-select>
+          </label>
         </div>
 
-        <div class="flex justify-end h-7">
+        <div class="flex items-end justify-between gap-2 mt-3 mb-2">
           <button
-            class="flex items-center gap-[2px] lg:gap-1 px-2 py-1 text-sm transition-all rounded-md lg:text-md me-1 text-primary-base-contrast bg-primary-variant-1/90 hover:bg-primary-base"
-            (click)="editDespesa(despesa)"
-            title="Editar Despesa"
+            appButton
+            color="accent-variant"
+            (click)="modalCadastroDespesa.set(true)"
           >
-            Editar
-            <span class="scale-90 lg:scale-100 material-symbols-outlined"
-              >box_edit</span
-            >
+            Nova Despesa
           </button>
 
-          <button
-            class="flex items-center px-1 py-1 transition-all rounded-md text-feedback-error-contrast/90 bg-feedback-error/90 hover:bg-feedback-error"
-            (click)="deleteDespesa(despesa)"
-            title="Deletar Despesa"
-          >
-            <span class="scale-90 material-symbols-outlined lg:scale-100"
-              >delete</span
+          <div class="flex justify-end gap-2">
+            <div
+              class="flex items-center rounded-md shadow-xl cursor-pointer ps-3 bg-secondary-variant-1 text-secondary-base-contrast"
+              (click)="setOrder('descricao')"
+              [class.opacity-80]="orderBy() !== 'descricao'"
             >
+              <span>Nome</span>
+              <span
+                class="transition-all min-w-3 material-symbols-outlined"
+                [class.rotate-180]="orderDirection() === -1"
+              >
+                @if (orderBy() === "descricao") { arrow_drop_up}
+              </span>
+            </div>
+
+            <div
+              class="flex items-center rounded-md cursor-pointer ps-3 bg-secondary-variant-1 text-secondary-base-contrast"
+              (click)="setOrder('valor')"
+              [class.opacity-80]="orderBy() !== 'valor'"
+            >
+              <span>Valor</span>
+
+              <span
+                class="transition-all min-w-3 material-symbols-outlined"
+                [class.rotate-180]="orderDirection() === -1"
+              >
+                @if (orderBy() === "valor") { arrow_drop_up }
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div
+        class="relative flex flex-col w-full gap-4 mt-1 overflow-auto max-h-[60vh] scrollbar scrollbar-track-background-base scrollbar-thumb-background-variant-light-2 pe-1 md:max-h-none"
+      >
+        <app-skeleton-loader [loading]="fetchingData()"></app-skeleton-loader>
+
+        @for(despesa of despesasFiltradas(); track $index) {
+        <div
+          class="w-full px-3 rounded-md shadow-lg h-max bg-background-variant-light-1"
+        >
+          <header
+            class="grid grid-cols-[1fr_auto] gap-2 grid-rows-1 pt-3 pb-1 border-b border-background-base"
+          >
+            <div>
+              <h1 class="break-all">
+                {{ despesa.descricao }}
+              </h1>
+              <h2 class="text-lg font-bold">
+                {{ despesa.valor | currency : "BRL" }}
+              </h2>
+            </div>
+
+            <div class="flex justify-end h-7">
+              <button
+                class="flex items-center gap-[2px] lg:gap-1 px-2 py-1 text-sm transition-all rounded-md lg:text-md me-1 text-primary-base-contrast bg-primary-variant-1/90 hover:bg-primary-base"
+                (click)="editDespesa(despesa)"
+                title="Editar Despesa"
+              >
+                Editar
+                <span class="scale-90 lg:scale-100 material-symbols-outlined"
+                  >box_edit</span
+                >
+              </button>
+
+              <button
+                class="flex items-center px-1 py-1 transition-all rounded-md text-feedback-error-contrast/90 bg-feedback-error/90 hover:bg-feedback-error"
+                (click)="deleteDespesa(despesa)"
+                title="Deletar Despesa"
+              >
+                <span class="scale-90 material-symbols-outlined lg:scale-100"
+                  >delete</span
+                >
+              </button>
+            </div>
+          </header>
+
+          <footer
+            class="w-full pt-1 pb-2 overflow-auto scrollbar scrollbar-track-background-variant-light-1 scrollbar-thumb-background-base"
+          >
+            <div class="flex gap-1 overflow-auto w-max">
+              @for (tag of despesa.tags; track $index) {
+              <span
+                class="px-2 text-sm truncate rounded-md shadow-lg bg-background-variant-light-2 w-max max-w-80 lg:text-md"
+                [title]="tag"
+              >
+                {{ tag.value }}
+              </span>
+              }
+            </div>
+          </footer>
+        </div>
+        } @empty { @if(!fetchingData()) { @if (tabSelecionada() ===
+        tabsTipoPagamentos[0]) {
+        <div>
+          <h2>Você não possui nenhuma despesa cadastrada</h2>
+        </div>
+        } @else {
+        <div>
+          <h2>Nenhuma despesa do tipo {{ tabSelecionada() }} cadastrada</h2>
+        </div>
+        } } }
+      </div>
+    </section>
+
+    <section class="mt-4 md:mt-0">
+      <header>
+        <div class="flex flex-wrap items-start justify-between gap-y-1 gap-x-2">
+          <h1 class="text-2xl font-bold leading-none">Histórico</h1>
+          <button
+            appButton
+            color="secondary"
+            variant="outline"
+            routerLink="historico"
+          >
+            Histórico Completo
+          </button>
+        </div>
+
+        <h2 class="mt-4 text-sm text-text-body-2">
+          Aqui estão suas últimas {{ quantidadeHistorico() }} despesas passadas.
+          <br />
+          <span class="font-bold"
+            >O histórico contabiliza as despesas um dia após a data de
+            pagamento</span
+          >
+        </h2>
+
+        <div class="flex flex-col items-start gap-1 mt-4">
+          <p class="text-sm text-text-body-2">
+            Esqueceu de adicionar uma despesa?
+          </p>
+
+          <button
+            class="flex items-center text-sm transition-all rounded-md ps-1 pe-2 text-accent-variant-1-contrast bg-accent-variant-1 hover:bg-accent-variant-1/80"
+            (click)="modalAddHistoricoDespesa.set(true)"
+            title="Adicionar Despesa Passada"
+          >
+            <span class="scale-75 material-symbols-outlined pe-1"
+              >note_stack_add</span
+            >
+            Adicione agora
           </button>
         </div>
       </header>
 
-      <footer class="w-full pt-1 pb-2 overflow-auto">
-        <div class="flex gap-1 overflow-auto w-max">
-          @for (tag of despesa.tags; track $index) {
-          <span
-            class="px-2 text-sm truncate rounded-md shadow-lg bg-background-variant-light-2 w-max max-w-80 lg:text-md"
-            [title]="tag"
-          >
-            {{ tag.value }}
-          </span>
-          }
+      @if(!fetchingData()) {
+
+      <div class="mt-4">
+        @for (date of availableDates(); track date) {
+        <div class="grid grid-cols-[1fr,auto,1fr] gap-2 items-center mb-4">
+          <div class="bg-text-body-2/15 w-full h-[1px]"></div>
+          <div class="w-24 text-center">{{ date | date : "dd/MM/yyyy" }}</div>
+          <div class="bg-text-body-2/15 w-full h-[1px]"></div>
         </div>
-      </footer>
-    </div>
-    } @empty { @if(!fetchingDespesas()) { @if (tabSelecionada() ===
-    tabsTipoPagamentos[0]) {
-    <div>
-      <h2>Você não possui nenhuma despesa cadastrada</h2>
-    </div>
-    } @else {
-    <div>
-      <h2>Nenhuma despesa do tipo {{ tabSelecionada() }} cadastrada</h2>
-    </div>
-    } } }
+
+        @for (historico of historicoDespesas()[date]; track $index) {
+        <div class="grid grid-cols-[auto_auto_1fr_auto] gap-3 mb-3">
+          <div
+            class="flex items-center transition-all rounded-md hover:bg-feedback-error/25"
+            (click)="deleteHistoricoDespesa(historico)"
+          >
+            <span
+              class="scale-90 cursor-pointer material-symbols-outlined lg:scale-100 text-feedback-error"
+              >delete</span
+            >
+          </div>
+
+          <div
+            class="grid w-12 h-12 rounded-md shadow-md bg-background-variant-light-1 place-items-center"
+          >
+            <span
+              class="scale-110 material-symbols-outlined text-text-body-1/60"
+            >
+              account_balance_wallet
+            </span>
+          </div>
+
+          <div class="flex items-center min-w-full">
+            <p
+              class="text-sm font-light leading-5 line-clamp-2 text-text-body-1"
+            >
+              {{ historico.descricao }}
+            </p>
+          </div>
+
+          <div class="flex items-center">
+            <p class="flex items-center justify-end text-sm font-medium">
+              <input
+                [(ngModel)]="historico.valor"
+                [readonly]="!historico.editing"
+                currencyMask
+                [options]="{
+                  prefix: 'R$ ',
+                  thousands: '.',
+                  decimal: ',',
+                  align: 'right'
+                }"
+                [title]="historico.valor | currency : 'BRL'"
+                class="px-1 border rounded-md shadow-md outline-none read-only:focus-within:ring-0 focus-within:ring-2 ring-text-body-2/20 text-text-body-2 read-only:text-feedback-error max-w-28 border-text-body-1/20 read-only:border-0 bg-background-base"
+              />
+
+              @if(!historico.loading) {
+              <span
+                class="scale-[0.8] icon-bold cursor-pointer material-symbols-outlined text-feedback-error transition-all rounded-md p-1 {{
+                  historico.editing
+                    ? 'text-feedback-success hover:bg-feedback-success/25'
+                    : 'text-feedback-error hover:bg-feedback-error/25'
+                }}"
+                (click)="
+                  !historico.editing
+                    ? (historico.editing = true)
+                    : saveHistoricoDespesa(historico)
+                "
+              >
+                {{ historico.editing ? "check" : "edit" }}
+              </span>
+
+              } @else {
+              <span class="animate-spin">
+                <span
+                  class="scale-[0.8] icon-bold cursor-pointer material-symbols-outlined text-feedback-info transition-all rounded-md p-1"
+                >
+                  progress_activity
+                </span>
+              </span>
+              }
+            </p>
+          </div>
+        </div>
+        } } @empty {
+        <div class="grid items-center gap-2 mb-4">
+          <div class="bg-text-body-2/15 w-full h-[1px]"></div>
+          <p class="font-light text-center">Nenhum histórico disponível</p>
+          <div class="bg-text-body-2/15 w-full h-[1px]"></div>
+        </div>
+
+        }
+      </div>
+      } @else {
+      <div class="relative w-full h-full">
+        <app-skeleton-loader [loading]="fetchingData()"></app-skeleton-loader>
+      </div>
+      }
+    </section>
   </div>
 </div>
 
@@ -155,9 +286,7 @@
   (close)="modalCadastroDespesa.set(false)"
 >
   @if(modalCadastroDespesa()) {
-  <div
-    class="container w-[95vw] lg:w-[90vw] max-w-[80rem] h-[97vh] lg:h-[90vh]"
-  >
+  <div class="container w-[95vw] max-w-2xl h-[97vh] lg:h-[90vh]">
     <app-despesa-form
       (despesaCreated)="handleDespesaCreated($event)"
     ></app-despesa-form>
@@ -191,3 +320,27 @@
     ></app-edit-despesa>
   </div>
 </app-modal>
+
+@if (modalDeleteHistoricoDespesa()) {
+<app-modal
+  class="rounded-md"
+  [open]="modalDeleteHistoricoDespesa()"
+  (close)="modalDeleteHistoricoDespesa.set(false)"
+>
+  <app-delete-historico-despesa-alert
+    [historicoDespesa]="historicoToDelete()!"
+    (optionDeleted)="handleHistoricoDespesaDeleted()"
+  ></app-delete-historico-despesa-alert>
+</app-modal>
+
+} @if (modalAddHistoricoDespesa()) {
+<app-modal
+  class="rounded-md w-[96vw] max-w-2xl md:w-[90vw]"
+  [open]="modalAddHistoricoDespesa()"
+  (close)="modalAddHistoricoDespesa.set(false)"
+>
+  <app-add-despesa-passada
+    (despesaPassadaCreated)="handleDespesaPassadaCreated($event)"
+  ></app-add-despesa-passada>
+</app-modal>
+}
