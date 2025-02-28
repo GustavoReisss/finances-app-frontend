@@ -7,6 +7,13 @@ terraform {
   }
 
   required_version = ">= 1.2.0"
+
+  backend "s3" {
+    bucket         = "finances-app-state-bucket"
+    key            = "frontend/terraform.tfstate"
+    region         = "sa-east-1"
+    dynamodb_table = "terraform-locks"
+  }
 }
 
 provider "aws" {
