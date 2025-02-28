@@ -5,7 +5,6 @@ import { Despesa } from '../../../../shared/interfaces/despesa.interface';
 import { DespesaFormComponent } from './ui/despesa-form/despesa-form.component';
 import { delay, finalize, forkJoin, map } from 'rxjs';
 import { SkeletonLoaderComponent } from '../../../../shared/components/skeleton-loader/skeleton-loader.component';
-import { TabsComponent } from '../../../../shared/components/tabs/tabs.component';
 import { FormsModule } from '@angular/forms';
 import { ModalComponent } from '../../../../shared/components/modal/modal.component';
 import { ButtonDirective } from '../../../../shared/directives/button/button.directive';
@@ -31,7 +30,6 @@ type OrderDirection = -1 | 1 // asc || desc
     CurrencyPipe,
     DespesaFormComponent,
     SkeletonLoaderComponent,
-    TabsComponent,
     FormsModule,
     ModalComponent,
     ButtonDirective,

@@ -27,7 +27,9 @@ const PROXY_CONFIG = [
         "context": [
             "/api_proxy/despesas",
             "/api_proxy/extrato_despesas",
-            "/api_proxy/ativos"
+            "/api_proxy/ativos",
+            "/api_proxy/receitas_recorrentes",
+            "/api_proxy/entradas",
         ],
         "target": "http://127.0.0.1:5000",
         "secure": false,

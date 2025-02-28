@@ -1,0 +1,47 @@
+<div class="w-full h-full px-4 py-4">
+  <header>
+    <h1 class="text-2xl font-bold">Adicionar Entrada</h1>
+    <h2 class="mb-6 text-text-body-2">Adicione uma receita não recorrente!</h2>
+  </header>
+
+  <form [formGroup]="entradaForm">
+    <div>
+      <label class="block mb-2">
+        Descrição <span class="text-sm text-feedback-error">*</span>
+        <input
+          formControlName="descricao"
+          appInput
+          type="text"
+          placeholder="Descrição da Receita"
+        />
+      </label>
+
+      <div class="flex flex-wrap gap-2 mb-2">
+        <label class="flex-grow flex-shrink block basis-0 min-w-48">
+          Data do Recebimento <span class="text-sm text-feedback-error">*</span>
+          <app-date-picker formControlName="data"></app-date-picker>
+        </label>
+
+        <label class="flex-grow flex-shrink block basis-0 min-w-48">
+          Valor <span class="text-sm text-feedback-error">*</span>
+          <input
+            formControlName="valor"
+            appInput
+            currencyMask
+            [options]="{
+              prefix: 'R$ ',
+              thousands: '.',
+              decimal: ',',
+              align: 'left'
+            }"
+          />
+        </label>
+      </div>
+    </div>
+    <div>
+      <button appButton (click)="submitForm()" class="w-full mt-6">
+        Adicionar
+      </button>
+    </div>
+  </form>
+</div>

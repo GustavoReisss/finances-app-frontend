@@ -10,6 +10,14 @@ export const routes: Routes = [
         loadComponent: () => import('./features/despesas/features/historico-despesas/historico-despesas.component').then(c => c.HistoricoDespesasComponent)
     },
     {
+        path: 'receitas',
+        loadComponent: () => import('./features/receitas/receitas.component').then(c => c.ReceitasComponent)
+    },
+    {
+        path: 'receitas/historico',
+        loadComponent: () => import('./features/receitas/features/historico-receitas/historico-receitas.component').then(c => c.HistoricoDespesasComponent)
+    },
+    {
         path: '',
         redirectTo: 'despesas',
         pathMatch: 'full'

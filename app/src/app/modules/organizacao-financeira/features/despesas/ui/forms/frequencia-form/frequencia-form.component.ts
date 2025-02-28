@@ -2,13 +2,13 @@ import { Component, inject, Input, input, OnDestroy, OnInit, signal } from '@ang
 import { ComboboxComponent } from '../../../../../../../shared/components/combobox/combobox.component';
 import { InputDirective } from '../../../../../../../shared/directives/input/input.directive';
 import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { daysOptions, Frequencia, frequenciasOptions, setDetalhesFrequenciaFields } from '../../../shared/despesa-form.utils';
+import { Frequencia, frequenciasOptions, setDetalhesFrequenciaFields } from '../../../shared/despesa-form.utils';
 import { DatePickerComponent } from '../../../../../../../shared/components/date-picker/date-picker.component';
 import { DatePipe } from '@angular/common';
 import { CheckboxComponent } from '../../../../../../../shared/components/checkbox/checkbox.component';
 import { Despesa } from '../../../../../../../shared/interfaces/despesa.interface';
+import { TODAY, WEEK_DAYS } from '../../../../../../../shared/utils/date.utils';
 
-const TODAY = new Date()
 
 @Component({
   selector: 'app-frequencia-form',
@@ -32,7 +32,7 @@ export class FrequenciaFormComponent implements OnInit, OnDestroy {
 
   frequenciaSelecionada = signal<Frequencia | "">("")
 
-  daysOptions = daysOptions
+  weekDays = WEEK_DAYS
   frequenciasOptions = frequenciasOptions
 
   maxDate = ""

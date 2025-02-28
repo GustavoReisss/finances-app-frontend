@@ -1,6 +1,6 @@
 <div class="py-4 border-b border-text-body-1/20">
   <h2 class="pb-2 text-lg font-bold text-primary-base">
-    Frequência de Pagamento <span class="text-sm text-feedback-error">*</span>
+    Frequência de Recebimento <span class="text-sm text-feedback-error">*</span>
   </h2>
 
   <div class="flex gap-5">
@@ -20,7 +20,7 @@
 
     <div class="grid pt-3 sm:grid-cols-2 sm:gap-3">
       <label>
-        Dia do Pagamento <span class="text-sm text-feedback-error">*</span>
+        Dia do Mês <span class="text-sm text-feedback-error">*</span>
         <input
           appInput
           class="w-full"
@@ -75,7 +75,7 @@
         </div>
       </div>
 
-      <div [formGroup]="despesaForm" class="grid sm:grid-cols-2 sm:gap-3">
+      <div [formGroup]="form" class="grid sm:grid-cols-2 sm:gap-3">
         <label>
           <span>
             Data Próximo Pagamento
@@ -85,7 +85,7 @@
           <app-date-picker
             [min]="minDate"
             [max]="maxDate"
-            formControlName="dataProximoPagamento"
+            formControlName="dataProximoRecebimento"
           ></app-date-picker>
           @if (minDate) {
           <p class="pt-1 text-xs font-bold">

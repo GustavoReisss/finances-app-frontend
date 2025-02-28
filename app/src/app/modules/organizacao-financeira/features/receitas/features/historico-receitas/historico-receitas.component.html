@@ -1,0 +1,159 @@
+<div class="container pb-4">
+  <p
+    routerLink=".."
+    class="flex items-center gap-2 pb-1 mb-4 border-b cursor-pointer pe-3 border-text-body-2/40 w-min text-text-body-1/70"
+  >
+    <span class="w-4 leading-none scale-75 material-symbols-outlined">
+      arrow_back_ios
+    </span>
+    <span>Receitas</span>
+  </p>
+  <h1 class="text-2xl font-bold">Histórico de Entradas</h1>
+
+  <h2 class="mt-2 text-sm text-text-body-2">
+    Aqui você encontra todas as suas entradas registradas, além disso você pode
+    adicionar novas entradas e editar as já existentes.
+  </h2>
+
+  <div class="flex flex-col items-start gap-1 mt-3">
+    <button
+      class="flex items-center py-0.5 text-sm transition-all rounded-md ps-1 pe-2 text-accent-variant-1-contrast bg-accent-variant-1 hover:bg-accent-variant-1/80"
+      (click)="modalAddEntrada.set(true)"
+      title="Adicionar Despesa Passada"
+    >
+      <span class="scale-75 material-symbols-outlined pe-1"
+        >note_stack_add</span
+      >
+      Nova Entrada
+    </button>
+  </div>
+
+  <div class="flex justify-end mt-2 mb-4">
+    <label>
+      <span class="inline-block w-full text-end">Antes de:</span>
+      <app-date-picker
+        class="w-max"
+        [(ngModel)]="initialDate"
+        (ngModelChange)="fetchHistoricoDespesas()"
+      >
+      </app-date-picker>
+    </label>
+  </div>
+
+  @if (!loading()) {
+
+  <div>
+    @for (date of availableDates(); track date) {
+    <div class="grid grid-cols-[1fr,auto,1fr] gap-2 items-center mb-4">
+      <div class="bg-text-body-2/15 w-full h-[1px]"></div>
+      <div class="w-24 text-center">{{ date | date : "dd/MM/yyyy" }}</div>
+      <div class="bg-text-body-2/15 w-full h-[1px]"></div>
+    </div>
+
+    @for (entrada of entradasByDate()[date]; track $index) {
+    <div class="grid grid-cols-[auto_auto_1fr_auto] gap-3 mb-3">
+      <div
+        class="flex items-center transition-all rounded-md hover:bg-feedback-error/25"
+        (click)="deleteEntrada(entrada)"
+      >
+        <span
+          class="scale-90 cursor-pointer material-symbols-outlined lg:scale-100 text-feedback-error"
+          >delete</span
+        >
+      </div>
+
+      <div
+        class="grid w-12 h-12 rounded-md shadow-md bg-background-variant-light-1 place-items-center"
+      >
+        <span class="scale-110 material-symbols-outlined text-text-body-1/60">
+          account_balance_wallet
+        </span>
+      </div>
+
+      <div class="flex items-center min-w-full">
+        <p class="text-sm font-light leading-5 line-clamp-2 text-text-body-1">
+          {{ entrada.descricao }}
+        </p>
+      </div>
+
+      <div class="flex items-center">
+        <p class="flex items-center justify-end text-sm font-medium">
+          <input
+            [(ngModel)]="entrada.valor"
+            [readonly]="!entrada.editing"
+            currencyMask
+            [options]="{
+              prefix: 'R$ ',
+              thousands: '.',
+              decimal: ',',
+              align: 'right'
+            }"
+            [title]="entrada.valor | currency : 'BRL'"
+            class="px-1 border rounded-md shadow-md outline-none read-only:focus-within:ring-0 focus-within:ring-2 ring-text-body-2/20 text-text-body-2 read-only:text-feedback-success max-w-28 border-text-body-1/20 read-only:border-0 bg-background-base"
+          />
+
+          @if(!entrada.loading) {
+          <span
+            class="scale-[0.8] icon-bold cursor-pointer material-symbols-outlined transition-all rounded-md p-1 text-feedback-success hover:bg-feedback-success/25"
+            (click)="
+              !entrada.editing ? (entrada.editing = true) : saveEntrada(entrada)
+            "
+          >
+            {{ entrada.editing ? "check" : "edit" }}
+          </span>
+
+          } @else {
+          <span class="animate-spin">
+            <span
+              class="scale-[0.8] icon-bold cursor-pointer material-symbols-outlined text-feedback-info transition-all rounded-md p-1"
+            >
+              progress_activity
+            </span>
+          </span>
+          }
+        </p>
+      </div>
+    </div>
+    } } @empty {
+    <div class="grid items-center gap-2 mb-4">
+      <div class="bg-text-body-2/15 w-full h-[1px]"></div>
+      <p class="font-light text-center">
+        Nenhum registro encontrado antes de
+        {{ initialDate | date : "dd/MM/yyyy" }}
+      </p>
+      <div class="bg-text-body-2/15 w-full h-[1px]"></div>
+    </div>
+
+    }
+  </div>
+  }
+</div>
+
+<!-- Modal Nova Entrada  -->
+
+@if (modalAddEntrada()) {
+<app-modal
+  class="rounded-md w-[96vw] max-w-2xl md:w-[90vw]"
+  [open]="modalAddEntrada()"
+  (close)="modalAddEntrada.set(false)"
+>
+  <app-add-entrada
+    (entradaCreated)="handleEntradaCreated($event)"
+  ></app-add-entrada>
+</app-modal>
+}
+
+<!-- Modal Delete Entrada  -->
+
+@if (modalDeleteEntrada()) {
+<app-modal
+  class="rounded-md"
+  [open]="modalDeleteEntrada()"
+  (close)="modalDeleteEntrada.set(false)"
+>
+  <app-delete-entrada-alert
+    [entrada]="entradaToDelete()"
+    (optionDeleted)="handleEntradaDeleted()"
+  ></app-delete-entrada-alert>
+</app-modal>
+}

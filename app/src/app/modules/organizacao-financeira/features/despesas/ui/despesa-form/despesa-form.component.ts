@@ -13,10 +13,11 @@ import { ModalComponent } from '../../../../../../shared/components/modal/modal.
 import { RemoveOptionComponent } from './ui/remove-option/remove-option.component';
 import { AddCategoriaPagamentoComponent } from './ui/add-categoria-pagamento/add-categoria-pagamento.component';
 import { DatePickerComponent } from '../../../../../../shared/components/date-picker/date-picker.component';
-import { addControls, removeControls, tipoPagamento, TODAY } from '../../shared/despesa-form.utils';
+import { tipoPagamento } from '../../shared/despesa-form.utils';
 import { FrequenciaFormComponent } from '../forms/frequencia-form/frequencia-form.component';
 import { NgxCurrencyDirective } from 'ngx-currency';
-import { markAsDirtAndTouched } from '../../../../../../shared/utils/form';
+import { addControls, markAsDirtAndTouched, removeControls } from '../../../../../../shared/utils/form.utils';
+import { TODAY } from '../../../../../../shared/utils/date.utils';
 
 export type OptionsToDelete = "categoriaPagamento"
 

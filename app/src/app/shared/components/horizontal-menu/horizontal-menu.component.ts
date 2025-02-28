@@ -15,6 +15,11 @@ export const MENU_ITEMS = [
     "label": "Minhas Finanças"
   },
   {
+    "route": "/organizacao-financeira/receitas",
+    "icon": "savings",
+    "label": "Receitas"
+  },
+  {
     "route": "/investimentos",
     "icon": "monitoring",
     "label": "Investimentos"

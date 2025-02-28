@@ -1,0 +1,49 @@
+<div class="w-full h-full px-4 py-4">
+  <header>
+    <h1 class="text-2xl font-bold">Adicionar Receita Recorrente</h1>
+    <h2 class="mb-6 text-text-body-2">
+      Valores previsíveis que entram periodicamente, como salário, aposentadoria
+      e aluguel de imóveis.
+    </h2>
+  </header>
+
+  <form [formGroup]="receitaForm">
+    <div>
+      <label class="block mb-2">
+        Descrição <span class="text-sm text-feedback-error">*</span>
+        <input
+          formControlName="descricao"
+          appInput
+          type="text"
+          placeholder="Descrição da Receita"
+        />
+      </label>
+
+      <div class="flex flex-wrap gap-2 mb-2">
+        <label class="flex-grow flex-shrink block basis-0 min-w-48">
+          Valor <span class="text-sm text-feedback-error">*</span>
+          <input
+            formControlName="valor"
+            appInput
+            currencyMask
+            [options]="{
+              prefix: 'R$ ',
+              thousands: '.',
+              decimal: ',',
+              align: 'left'
+            }"
+          />
+        </label>
+      </div>
+    </div>
+
+    <app-recorrencia-form [form]="receitaForm" [receita]="receita()">
+    </app-recorrencia-form>
+
+    <div>
+      <button appButton (click)="submitForm()" class="w-full mt-6">
+        Adicionar
+      </button>
+    </div>
+  </form>
+</div>

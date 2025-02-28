@@ -1,5 +1,5 @@
 import { Despesa } from "../../../../shared/interfaces/despesa.interface"
-import { daysOptions } from './shared/despesa-form.utils';
+import { WEEK_DAYS } from "../../../../shared/utils/date.utils"
 
 export interface Tag {
     type: string
@@ -47,7 +47,7 @@ export function createTags(despesa: Despesa): Tag[] {
                 })
                 break
             case "Semanal":
-                const diaSemana = daysOptions.find(el => el.value === despesa.detalhesFrequencia!.diaSemana)
+                const diaSemana = WEEK_DAYS.find(el => el.value === despesa.detalhesFrequencia!.diaSemana)
                 if (!diaSemana) break
 
                 if (["5", "6"].includes(diaSemana.value)) { // Sábado e Domingo

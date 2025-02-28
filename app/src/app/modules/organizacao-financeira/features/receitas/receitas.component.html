@@ -1,74 +1,35 @@
 <div class="w-full min-h-full lg:container grid grid-rows-[auto_1fr]">
   <header class="pb-4 border-b md:mb-3 border-text-body-2/20">
-    <h1 class="text-3xl font-bold">Despesas</h1>
+    <h1 class="text-3xl font-bold">Receitas</h1>
     <h2 class="text-text-body-2">
-      Saiba para onde seu dinheiro está indo e planeje um futuro financeiro mais
-      seguro.
+      Cadastre suas receitas e contribua para a previsibilidade do seu
+      patrimônio futuro!
     </h2>
   </header>
 
   <div
-    class="grid grid-cols-1 grid-rows-[auto_1fr] md:grid-rows-1 gap-4 md:grid-cols-[55%_45%] lg:grid-cols-[60%_40%]"
+    class="grid grid-cols-1 grid-rows-[auto_1fr] md:grid-rows-1 gap-4 md:grid-cols-2"
   >
     <section
       class="pt-6 pb-8 border-b md:pt-3 md:border-b-0 md:pb-0 md:border-r border-text-body-2/20 md:pe-2 lg:pe-4"
     >
-      <div>
-        <div
-          class="flex flex-wrap justify-between gap-4 leading-none align-top"
+      <header class="mb-4">
+        <h2 class="mb-1 text-xl font-bold">Recorrentes</h2>
+
+        <h3 class="text-text-body-2">
+          Valores previsíveis que entram periodicamente, como salário,
+          aposentadoria e aluguel de imóveis.
+        </h3>
+      </header>
+
+      <div class="flex items-end justify-between gap-2 mt-3 mb-2">
+        <button
+          appButton
+          color="accent-variant"
+          (click)="modalCadastroReceita.set(true)"
         >
-          <h2 class="text-2xl font-bold">Recorrentes</h2>
-
-          <label class="min-w-44 ms-auto">
-            <span class="text-text-body-1/80">Tipo de Despesa</span>
-            <app-select
-              [options]="tabsTipoPagamentos"
-              [ngModel]="tabSelecionada()"
-              (ngModelChange)="tabSelecionada.set($event)"
-            ></app-select>
-          </label>
-        </div>
-
-        <div class="flex items-end justify-between gap-2 mt-3 mb-2">
-          <button
-            appButton
-            color="accent-variant"
-            (click)="modalCadastroDespesa.set(true)"
-          >
-            Nova Despesa
-          </button>
-
-          <div class="flex justify-end gap-2">
-            <div
-              class="flex items-center rounded-md shadow-xl cursor-pointer ps-3 bg-secondary-variant-1 text-secondary-base-contrast"
-              (click)="setOrder('descricao')"
-              [class.opacity-80]="orderBy() !== 'descricao'"
-            >
-              <span>Nome</span>
-              <span
-                class="transition-all min-w-3 material-symbols-outlined"
-                [class.rotate-180]="orderDirection() === -1"
-              >
-                @if (orderBy() === "descricao") { arrow_drop_up}
-              </span>
-            </div>
-
-            <div
-              class="flex items-center rounded-md cursor-pointer ps-3 bg-secondary-variant-1 text-secondary-base-contrast"
-              (click)="setOrder('valor')"
-              [class.opacity-80]="orderBy() !== 'valor'"
-            >
-              <span>Valor</span>
-
-              <span
-                class="transition-all min-w-3 material-symbols-outlined"
-                [class.rotate-180]="orderDirection() === -1"
-              >
-                @if (orderBy() === "valor") { arrow_drop_up }
-              </span>
-            </div>
-          </div>
-        </div>
+          Nova Receita Recorrente
+        </button>
       </div>
 
       <div
@@ -76,7 +37,7 @@
       >
         <app-skeleton-loader [loading]="fetchingData()"></app-skeleton-loader>
 
-        @for(despesa of despesasFiltradas(); track $index) {
+        @for(receita of receitasRecorrentes(); track $index) {
         <div
           class="w-full px-3 rounded-md shadow-lg h-max bg-background-variant-light-1"
         >
@@ -85,18 +46,18 @@
           >
             <div>
               <h1 class="break-all">
-                {{ despesa.descricao }}
+                {{ receita.descricao }}
               </h1>
               <h2 class="text-lg font-bold">
-                {{ despesa.valor | currency : "BRL" }}
+                {{ receita.valor | currency : "BRL" }}
               </h2>
             </div>
 
             <div class="flex justify-end h-7">
               <button
                 class="flex items-center gap-[2px] lg:gap-1 px-2 py-1 text-sm transition-all rounded-md lg:text-md me-1 text-primary-base-contrast bg-primary-variant-1/90 hover:bg-primary-base"
-                (click)="editDespesa(despesa)"
-                title="Editar Despesa"
+                (click)="editReceita(receita)"
+                title="Editar Receita"
               >
                 Editar
                 <span class="scale-90 lg:scale-100 material-symbols-outlined"
@@ -106,8 +67,8 @@
 
               <button
                 class="flex items-center px-1 py-1 transition-all rounded-md text-feedback-error-contrast/90 bg-feedback-error/90 hover:bg-feedback-error"
-                (click)="deleteDespesa(despesa)"
-                title="Deletar Despesa"
+                (click)="deleteReceita(receita)"
+                title="Deletar Receita"
               >
                 <span class="scale-90 material-symbols-outlined lg:scale-100"
                   >delete</span
@@ -120,12 +81,12 @@
             class="w-full pt-1 pb-2 overflow-auto scrollbar scrollbar-track-background-variant-light-1 scrollbar-thumb-background-base"
           >
             <div class="flex gap-1 overflow-auto w-max">
-              @for (tag of despesa.tags; track $index) {
+              @for (tag of receita.tags; track $index) {
               <span
                 class="px-2 text-sm truncate rounded-md shadow-lg bg-background-variant-light-2 w-max max-w-80 lg:text-md"
                 [title]="tag"
               >
-                {{ tag.value }}
+                {{ tag }}
               </span>
               }
             </div>
@@ -135,17 +96,12 @@
         <div
           class="py-3 mt-3 font-light border-t text-text-body-2 border-text-body-2/20"
         >
-          @if(!fetchingData()) { @if (tabSelecionada() ===
-          tabsTipoPagamentos[0]) {
           <h2>
-            Não cadastrou nenhuma despesa futura?
+            Não cadastrou nenhuma receita recorrente?
             <br />
             Experimente clicando no botão
-            <span class="font-bold">"Nova Despesa"</span>
+            <span class="font-bold">"Nova Receita Recorrente"</span>
           </h2>
-          } @else {
-          <h2>Nenhuma despesa do tipo {{ tabSelecionada() }} cadastrada</h2>
-          } }
         </div>
         }
       </div>
@@ -154,40 +110,38 @@
     <section class="pt-3">
       <header>
         <div class="flex flex-wrap items-start justify-between gap-y-1 gap-x-2">
-          <h1 class="text-2xl font-bold leading-none">Histórico</h1>
+          <h1 class="text-xl font-bold">Entradas</h1>
           <button
             appButton
             color="secondary"
             variant="outline"
             routerLink="historico"
+            class="leading-tight"
           >
-            Histórico Completo
+            Todas as Entradas
           </button>
         </div>
 
-        <h2 class="mt-4 text-sm text-text-body-2">
-          Aqui estão suas últimas {{ quantidadeHistorico() }} despesas passadas.
-          <br />
-          <span class="font-bold"
-            >O histórico contabiliza as despesas um dia após a data de
-            pagamento</span
-          >
+        <h2 class="mt-4 text-text-body-2">
+          Aqui você pode adicionar receitas avulsas e acompanhar os pagamentos
+          já recebidos, incluindo aqueles vindos de receitas recorrentes.
+          Mantenha seu fluxo de entrada sempre atualizado.
         </h2>
 
         <div class="flex flex-col items-start gap-1 mt-4">
-          <p class="text-sm text-text-body-2">
+          <!-- <p class="text-sm text-text-body-2">
             Esqueceu de adicionar uma despesa?
-          </p>
+          </p> -->
 
           <button
-            class="flex items-center text-sm transition-all rounded-md ps-1 pe-2 text-accent-variant-1-contrast bg-accent-variant-1 hover:bg-accent-variant-1/80"
-            (click)="modalAddHistoricoDespesa.set(true)"
-            title="Adicionar Despesa Passada"
+            class="flex items-center text-sm py-0.5 transition-all rounded-md ps-1 pe-2 text-accent-variant-1-contrast bg-accent-variant-1 hover:bg-accent-variant-1/80"
+            (click)="modalAddEntrada.set(true)"
+            title="Adicionar Entrada"
           >
             <span class="scale-75 material-symbols-outlined pe-1"
               >note_stack_add</span
             >
-            Adicione agora
+            Nova Entrada
           </button>
         </div>
       </header>
@@ -202,11 +156,11 @@
           <div class="bg-text-body-2/15 w-full h-[1px]"></div>
         </div>
 
-        @for (historico of historicoDespesas()[date]; track $index) {
+        @for (entrada of entradasByDate()[date]; track $index) {
         <div class="grid grid-cols-[auto_auto_1fr_auto] gap-3 mb-3">
           <div
             class="flex items-center transition-all rounded-md hover:bg-feedback-error/25"
-            (click)="deleteHistoricoDespesa(historico)"
+            (click)="deleteEntrada(entrada)"
           >
             <span
               class="scale-90 cursor-pointer material-symbols-outlined lg:scale-100 text-feedback-error"
@@ -228,15 +182,15 @@
             <p
               class="text-sm font-light leading-5 line-clamp-2 text-text-body-1"
             >
-              {{ historico.descricao }}
+              {{ entrada.descricao }}
             </p>
           </div>
 
           <div class="flex items-center">
             <p class="flex items-center justify-end text-sm font-medium">
               <input
-                [(ngModel)]="historico.valor"
-                [readonly]="!historico.editing"
+                [(ngModel)]="entrada.valor"
+                [readonly]="!entrada.editing"
                 currencyMask
                 [options]="{
                   prefix: 'R$ ',
@@ -244,24 +198,20 @@
                   decimal: ',',
                   align: 'right'
                 }"
-                [title]="historico.valor | currency : 'BRL'"
-                class="px-1 border rounded-md shadow-md outline-none read-only:focus-within:ring-0 focus-within:ring-2 ring-text-body-2/20 text-text-body-2 read-only:text-feedback-error max-w-28 border-text-body-1/20 read-only:border-0 bg-background-base"
+                [title]="entrada.valor | currency : 'BRL'"
+                class="px-1 border rounded-md shadow-md outline-none read-only:focus-within:ring-0 focus-within:ring-2 ring-text-body-2/20 text-text-body-2 read-only:text-feedback-success max-w-28 border-text-body-1/20 read-only:border-0 bg-background-base"
               />
 
-              @if(!historico.loading) {
+              @if(!entrada.loading) {
               <span
-                class="scale-[0.8] icon-bold cursor-pointer material-symbols-outlined text-feedback-error transition-all rounded-md p-1 {{
-                  historico.editing
-                    ? 'text-feedback-success hover:bg-feedback-success/25'
-                    : 'text-feedback-error hover:bg-feedback-error/25'
-                }}"
+                class="scale-[0.8] icon-bold cursor-pointer material-symbols-outlined text-feedback-success transition-all rounded-md p-1 hover:bg-feedback-success/25"
                 (click)="
-                  !historico.editing
-                    ? (historico.editing = true)
-                    : saveHistoricoDespesa(historico)
+                  !entrada.editing
+                    ? (entrada.editing = true)
+                    : saveEntrada(entrada)
                 "
               >
-                {{ historico.editing ? "check" : "edit" }}
+                {{ entrada.editing ? "check" : "edit" }}
               </span>
 
               } @else {
@@ -279,7 +229,7 @@
         } } @empty {
         <div class="grid items-center gap-2 mb-4">
           <div class="bg-text-body-2/15 w-full h-[1px]"></div>
-          <p class="font-light text-center">Nenhum histórico disponível</p>
+          <p class="font-light text-center">Nenhuma Entrada disponível</p>
           <div class="bg-text-body-2/15 w-full h-[1px]"></div>
         </div>
 
@@ -294,67 +244,82 @@
   </div>
 </div>
 
-<app-modal
-  class="rounded-md"
-  [open]="modalCadastroDespesa()"
-  (close)="modalCadastroDespesa.set(false)"
->
-  @if(modalCadastroDespesa()) {
-  <div class="container w-[95vw] max-w-2xl h-[97vh] lg:h-[90vh]">
-    <app-despesa-form
-      (despesaCreated)="handleDespesaCreated($event)"
-    ></app-despesa-form>
-  </div>
-  }
-</app-modal>
+<!-- Modal Nova Receita  -->
 
 <app-modal
   class="rounded-md"
-  [open]="modalDeleteDespesa()"
-  (close)="modalDeleteDespesa.set(false)"
+  [open]="modalCadastroReceita()"
+  (close)="modalCadastroReceita.set(false)"
 >
-  <app-delete-despesa-alert
-    [despesa]="despesaToDelete()"
-    (optionDeleted)="handleDespesaDeleted()"
-  ></app-delete-despesa-alert>
+  <div class="container w-[95vw] max-w-2xl h-[97vh] lg:h-[90vh]">
+    @if (modalCadastroReceita()) {
+    <app-add-receita
+      (receitaCreated)="handleReceitaCreated($event)"
+    ></app-add-receita>
+    }
+  </div>
 </app-modal>
+
+<!-- Modal Delete Receita  -->
+
+<app-modal
+  class="rounded-md"
+  [open]="modalDeleteReceita()"
+  (close)="modalDeleteReceita.set(false)"
+>
+  @if (modalDeleteReceita()) {
+  <app-delete-receita-alert
+    [receita]="receitaToDelete()"
+    (optionDeleted)="handleReceitaDeleted()"
+  ></app-delete-receita-alert>
+  }
+</app-modal>
+
+<!-- Modal Editar Receita  -->
 
 <app-modal
   position="right"
   class="rounded-md"
-  [open]="modalEditDespesa()"
-  (close)="modalEditDespesa.set(false); despesaToEdit.set({})"
+  [open]="modalEditReceita()"
+  (close)="modalEditReceita.set(false); receitaToEdit.set(null)"
 >
   <div
     class="container w-[99vw] max-w-3xl rounded-md h-full min-h-[100vh] max-h-[100vh]"
   >
-    <app-edit-despesa
-      [despesa]="despesaToEdit()"
-      (despesaUpdated)="despesaUpdatedHandler($event)"
-    ></app-edit-despesa>
+    @if(modalEditReceita()) {
+    <app-add-receita
+      (receitaUpdated)="receitaUpdatedHandler($event)"
+      [receita]="receitaToEdit()"
+    ></app-add-receita>
+    }
   </div>
 </app-modal>
 
-@if (modalDeleteHistoricoDespesa()) {
-<app-modal
-  class="rounded-md"
-  [open]="modalDeleteHistoricoDespesa()"
-  (close)="modalDeleteHistoricoDespesa.set(false)"
->
-  <app-delete-historico-despesa-alert
-    [historicoDespesa]="historicoToDelete()!"
-    (optionDeleted)="handleHistoricoDespesaDeleted()"
-  ></app-delete-historico-despesa-alert>
-</app-modal>
+<!-- Modal Nova Entrada  -->
 
-} @if (modalAddHistoricoDespesa()) {
+@if (modalAddEntrada()) {
 <app-modal
   class="rounded-md w-[96vw] max-w-2xl md:w-[90vw]"
-  [open]="modalAddHistoricoDespesa()"
-  (close)="modalAddHistoricoDespesa.set(false)"
+  [open]="modalAddEntrada()"
+  (close)="modalAddEntrada.set(false)"
 >
-  <app-add-despesa-passada
-    (despesaPassadaCreated)="handleDespesaPassadaCreated($event)"
-  ></app-add-despesa-passada>
+  <app-add-entrada
+    (entradaCreated)="handleEntradaCreated($event)"
+  ></app-add-entrada>
+</app-modal>
+}
+
+<!-- Modal Delete Entrada  -->
+
+@if (modalDeleteEntrada()) {
+<app-modal
+  class="rounded-md"
+  [open]="modalDeleteEntrada()"
+  (close)="modalDeleteEntrada.set(false)"
+>
+  <app-delete-entrada-alert
+    [entrada]="entradaToDelete()"
+    (optionDeleted)="handleEntradaDeleted()"
+  ></app-delete-entrada-alert>
 </app-modal>
 }

@@ -5,9 +5,9 @@ import { HttpService } from '../../../../../../shared/services/http/http.service
 import { InputDirective } from '../../../../../../shared/directives/input/input.directive';
 import { ButtonDirective } from '../../../../../../shared/directives/button/button.directive';
 import { DatePickerComponent } from '../../../../../../shared/components/date-picker/date-picker.component';
-import { TODAY } from '../../shared/despesa-form.utils';
 import { NgxCurrencyDirective } from 'ngx-currency';
-import { markAsDirtAndTouched } from '../../../../../../shared/utils/form';
+import { markAsDirtAndTouched } from '../../../../../../shared/utils/form.utils';
+import { TODAY } from '../../../../../../shared/utils/date.utils';
 
 
 
@@ -36,8 +36,6 @@ export class AddDespesaPassadaComponent {
 
   submitForm() {
     markAsDirtAndTouched(this.despesaPassadaForm)
-    console.log(this.despesaPassadaForm)
-
 
     if (this.despesaPassadaForm.invalid) return
 

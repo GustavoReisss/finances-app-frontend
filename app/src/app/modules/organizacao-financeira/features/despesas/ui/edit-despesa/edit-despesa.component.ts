@@ -8,15 +8,15 @@ import { DespesaService } from '../../services/despesa-service/despesa-form.serv
 import { SkeletonLoaderComponent } from '../../../../../../shared/components/skeleton-loader/skeleton-loader.component';
 import { AddCategoriaPagamentoComponent } from '../despesa-form/ui/add-categoria-pagamento/add-categoria-pagamento.component';
 import { ModalComponent } from '../../../../../../shared/components/modal/modal.component';
-import { DatePipe, JsonPipe } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { RemoveOptionComponent } from '../despesa-form/ui/remove-option/remove-option.component';
 import { DatePickerComponent } from '../../../../../../shared/components/date-picker/date-picker.component';
-import { CheckboxComponent } from '../../../../../../shared/components/checkbox/checkbox.component';
-import { daysOptions, tipoPagamento, TODAY } from '../../shared/despesa-form.utils';
+import { tipoPagamento } from '../../shared/despesa-form.utils';
 import { Subscription } from 'rxjs';
 import { FrequenciaFormComponent } from '../forms/frequencia-form/frequencia-form.component';
 import { NgxCurrencyDirective } from 'ngx-currency';
-import { markAsDirtAndTouched } from '../../../../../../shared/utils/form';
+import { markAsDirtAndTouched } from '../../../../../../shared/utils/form.utils';
+import { TODAY, WEEK_DAYS } from '../../../../../../shared/utils/date.utils';
 
 @Component({
   selector: 'app-edit-despesa',
@@ -29,10 +29,8 @@ import { markAsDirtAndTouched } from '../../../../../../shared/utils/form';
     SkeletonLoaderComponent,
     AddCategoriaPagamentoComponent,
     ModalComponent,
-    JsonPipe,
     RemoveOptionComponent,
     DatePickerComponent,
-    CheckboxComponent,
     DatePipe,
     FrequenciaFormComponent,
     NgxCurrencyDirective
@@ -81,7 +79,7 @@ export class EditDespesaComponent {
 
   tipoPagamento = signal<tipoPagamento | "">("")
 
-  daysOptions = daysOptions
+  weekDays = WEEK_DAYS
 
   categoriasPagamentos = computed<string[]>(() => [])
 
